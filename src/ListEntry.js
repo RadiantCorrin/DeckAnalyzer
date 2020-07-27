@@ -15,10 +15,10 @@ export default class ListEntry extends React.Component {
                 <table>
                     <tr>
                         <td><div style={{ }}>
-                            {this.card.name} ({this.card.set.toUpperCase()})
+                            {(this.card.modifier === "Foil") ? "FOIL " : ""}{this.card.name} ({this.card.set.toUpperCase()})
                         </div></td>
                         <td><div style={{ textAlign: 'right' }}>
-                            {(this.card.tcgprice > 0) ? '$' + this.card.tcgprice : "No Price"}
+                            {(this.card.tcgprice > 0) ? '$' + this.card.tcgprice : "No TCG Price"}{(this.card.ckprice > 0) ? ', $' + this.card.ckprice : ", No CK Price"}
                         </div></td>
                     </tr>
                 </table>

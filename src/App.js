@@ -11,6 +11,7 @@ export default class App extends React.Component {
     super(props);
     this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false };
     this.loadDeck = this.loadDeck.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this)
   }
 
   render() {
@@ -26,7 +27,7 @@ export default class App extends React.Component {
           <Container fluid>
             <Card>
               <CardBody>
-                <Form>
+                <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
                     <Label for="deckURL">Deck URL</Label>
                     <Input
@@ -64,83 +65,94 @@ export default class App extends React.Component {
         {this.state.loaded &&
           <Container fluid>
             <Row>
-              <Col style={{ marginLeft: 40, maxWidth: '20%', minWidth: 300 }}>
+              <Col style={{ marginLeft: 40, maxWidth: '30%', minWidth: 300 }}>
                 <Card>
-                  <CardHeader>Deck List and Price</CardHeader>
+                  <CardHeader>Deck List and Price (TCG, CK)</CardHeader>
                 </Card>
                 <div style={{ display: 'block', maxWidth: '100%', maxHeight: 500, overflow: 'auto' }}>
                   {this.state.listOfCards}
                 </div>
               </Col>
               <Col>
-                <Container>
-                  <Row>
-                    <Col style={{ width: 550, height: 350, minWidth: 550, minHeight: 350}}>
-                      <Card>
-                        <CardHeader >
-                          CMC Breakdown
+
+                <Row>
+                  <Col xs="auto">
+                    <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
+                      <CardHeader >
+                        CMC Breakdown
                         </CardHeader>
-                        <BarChart width={500} height={300} data={this.state.cmcData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="cmc">
-                            <Label value="CMC" position="insideBottom" offset={-1}></Label>
-                          </XAxis>
-                          <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
-                          <Tooltip />
-                          <Bar dataKey="number" fill='#8884d8'></Bar>
-                        </BarChart>
-                      </Card>
-                    </Col>
-                    <Col style={{ width: 550, height: 350, minWidth: 550, minHeight: 350}}>
-                      <Card>
-                        <CardHeader>
-                          Type Distribution
+                      <BarChart width={500} height={300} data={this.state.cmcData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="cmc">
+                          <Label value="CMC" position="insideBottom" offset={-5}></Label>
+                        </XAxis>
+                        <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
+                        <Tooltip />
+                        <Bar dataKey="number" fill='#8884d8'></Bar>
+                      </BarChart>
+                    </Card>
+                  </Col>
+                  <Col xs="auto">
+                    <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
+                      <CardHeader>
+                        Type Distribution
                       </CardHeader>
-                        <BarChart width={500} height={300} data={this.state.typeData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="type">
-                            <Label value="Type of Card" position="insideBottom" offset={-1}></Label>
-                          </XAxis>
-                          <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
-                          <Tooltip />
-                          <Bar dataKey="number" fill='#8884d8'></Bar>
-                        </BarChart>
-                      </Card>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col style={{ width: 550, height: 350, minWidth: 550, minHeight: 350}}>
+                      <BarChart width={500} height={300} data={this.state.typeData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="type">
+                          <Label value="Card Type" position="insideBottom" offset={-5}></Label>
+                        </XAxis>
+                        <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
+                        <Tooltip />
+                        <Bar dataKey="number" fill='#1ab886'></Bar>
+                      </BarChart>
+                    </Card>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs="auto">
+                    <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
                       <CardHeader>
                         Color Breakdown
                       </CardHeader>
-                      <BarChart width={500} height={300} data={this.state.cmcData}>
-                        <XAxis dataKey="cmc"></XAxis>
+                      <BarChart width={500} height={300} data={this.state.colorData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="color"></XAxis>
                         <YAxis></YAxis>
                         <Tooltip />
-                        <Bar dataKey="number" fill='#8884d8'></Bar>
+                        <Bar dataKey="number" fill='#4b71db'></Bar>
                       </BarChart>
-                    </Col>
-                    <Col style={{ width: 550, height: 350, minWidth: 550, minHeight: 350}}>
+                    </Card>
+                  </Col>
+                  <Col xs="auto">
+                    <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
                       <CardHeader>
                         Color Pip Distribution
-                    </CardHeader>
-                      <BarChart width={500} height={300} data={this.state.cmcData}>
-                        <XAxis dataKey="cmc"></XAxis>
+                      </CardHeader>
+                      <BarChart width={500} height={300} data={this.state.pipsData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="color"></XAxis>
                         <YAxis></YAxis>
                         <Tooltip />
-                        <Bar dataKey="number" fill='#8884d8'></Bar>
+                        <Bar dataKey="number" fill='#ed6666'></Bar>
                       </BarChart>
-                    </Col>
-                  </Row>
-                </Container>
+                    </Card>
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Container>
 
         }
-
+        <hr></hr>
       </div>
     );
+  }
+
+  // Allows enter to submit the form, and prevents the page from refreshing.
+  handleKeyPress(event) {
+    event.preventDefault()
+    this.loadDeck()
   }
 
   loadDeck() {
@@ -196,18 +208,41 @@ export default class App extends React.Component {
 
       let cmcRawData = {}
       let typeRawData = {}
+      let colorRawData = {}
+      let pipsRawData = {}
 
       for (let i = 0; i < jsonCards.length; i++) {
-        // console.log("Converting card " + i)
-        // console.log(jsonCards[i].card.prices)
+        // TODO 
+        // Change the price from the prices array based on whether or not this card is foil :)
+
+        /**
+         * prices:
+          ck: 0.25
+          ckfoil: 0.99
+          cm: 0.11
+          cmfoil: 0.06
+          mtgo: 0.03
+          mtgofoil: 0.77
+          tcg: 0.12
+          tcgfoil: 0.43
+        */
+
+        // Skip all cards in the MAYBEBOARD Category by default
+        if (jsonCards[i].category === "Maybeboard") {
+          continue
+        }
+
+        let tmpTCGPrice = (jsonCards[i].modifier === "Foil") ? jsonCards[i].card.prices.tcgfoil : jsonCards[i].card.prices.tcg;
+        let tmpCKPRice = (jsonCards[i].modifier === "Foil") ? jsonCards[i].card.prices.ckfoil : jsonCards[i].card.prices.ck;
+
         let tmp = new MTGCard(jsonCards[i].card.oracleCard.name,
           jsonCards[i].card.oracleCard.colors,
           jsonCards[i].card.oracleCard.manaCost,
           jsonCards[i].card.oracleCard.cmc,
           jsonCards[i].card.oracleCard.types,
           jsonCards[i].modifier,
-          jsonCards[i].card.prices.tcg,
-          jsonCards[i].card.prices.ck,
+          tmpTCGPrice,
+          tmpCKPRice,
           jsonCards[i].card.edition.editioncode);
 
 
@@ -220,13 +255,63 @@ export default class App extends React.Component {
         }
 
         // Add the types of this card to the raw values of the deck
-        for (let i = 0; i < tmp.types.length; i++) {
-          let type = tmp.types[i]
-          console.log(type)
+        // TODO: if a card has more than 1 (aka, is a basic land or something) 
+        //       then we need to add that type TIMES the quanitity of the card
+        for (let j = 0; j < tmp.types.length; j++) {
+          console.log(jsonCards[i].card.oracleCard.name + jsonCards[i].quantity)
+          let type = tmp.types[j]
           if (type in typeRawData) {
-            typeRawData[type] = typeRawData[type] + 1
+            typeRawData[type] = typeRawData[type] + (1 * jsonCards[i].quantity)
           } else {
-            typeRawData[type] = 1
+            typeRawData[type] = (1 * jsonCards[i].quantity)
+          }
+        }
+
+        // Add the colors of this card to the list
+        for (let j = 0; j < tmp.colors.length; j++) {
+          let color = tmp.colors[j]
+          if (color in colorRawData) {
+            colorRawData[color] = colorRawData[color] + 1
+          } else {
+            colorRawData[color] = 1
+          }
+        }
+
+        // TODO: what is the character symbol for colorless?
+        // Count the actual symbols
+        for (let j = 0; j < tmp.manaCost.length; j++) {
+          let ch = tmp.manaCost.charAt(j)
+
+          if (ch === "W") {
+            if ("White" in pipsRawData) {
+              pipsRawData["White"]++
+            } else {
+              pipsRawData["White"] = 1
+            }
+          } else if (ch === "U") {
+            if ("Blue" in pipsRawData) {
+              pipsRawData["Blue"]++
+            } else {
+              pipsRawData["Blue"] = 1
+            }
+          } else if (ch === "B") {
+            if ("Black" in pipsRawData) {
+              pipsRawData["Black"]++
+            } else {
+              pipsRawData["Black"] = 1
+            }
+          } else if (ch === "R") {
+            if ("Red" in pipsRawData) {
+              pipsRawData["Red"]++
+            } else {
+              pipsRawData["Red"] = 1
+            }
+          } else if (ch === "G") {
+            if ("Green" in pipsRawData) {
+              pipsRawData["Green"]++
+            } else {
+              pipsRawData["Green"] = 1
+            }
           }
         }
 
@@ -244,7 +329,19 @@ export default class App extends React.Component {
       // Put the type data in the form that the charts need
       let typeData = []
       for (var key1 in typeRawData) {
-        typeData.push({ type: key1, number: typeRawData[key1]})
+        typeData.push({ type: key1, number: typeRawData[key1] })
+      }
+
+      // Put the color data in the form for the charts
+      let colorData = []
+      for (var key2 in colorRawData) {
+        colorData.push({ color: key2, number: colorRawData[key2] })
+      }
+
+      // Put the color data in the form for the charts
+      let pipsData = []
+      for (var key3 in pipsRawData) {
+        pipsData.push({ color: key3, number: pipsRawData[key3] })
       }
 
       // Map the JS cards to react elements, and store those elements in a list
@@ -255,7 +352,7 @@ export default class App extends React.Component {
       })
 
       // Set the deck in the state
-      this.setState({ deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false, cmcData: cmcData, typeData: typeData })
+      this.setState({ deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false, cmcData: cmcData, typeData: typeData, colorData: colorData, pipsData: pipsData })
     });
   }
 };
