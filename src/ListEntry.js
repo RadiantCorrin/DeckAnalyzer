@@ -8,7 +8,6 @@ export default class ListEntry extends React.Component {
         this.card = this.props.card
     }
 
-    /// {(this.card.price === "0") ? '$' + this.card.tcgprice : "No Price"}
     render() {
         return (
             <Card>
