@@ -67,11 +67,20 @@ export default class App extends React.Component {
             <Row>
               <Col style={{ marginLeft: 40, maxWidth: '30%', minWidth: 300 }}>
                 <Card>
-                  <CardHeader>Deck List and Price (TCG, CK)</CardHeader>
+                  <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
                 </Card>
-                <div style={{ display: 'block', maxWidth: '100%', maxHeight: 500, overflow: 'auto' }}>
+                <div style={{ display: 'block', maxWidth: '100%', maxHeight: 475, overflow: 'auto' }}>
                   {this.state.listOfCards}
                 </div>
+                <Card>
+                    <p><b>Stats:</b></p>
+                    <div>Total cost from TCGPlayer: <i>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
+                    <div>Total cost from Card Kingdom: <i>{"$" + this.state.CKCost.toFixed(2)}</i></div>
+                    <div>Most expensive card from TCGPlayer: </div>
+                    <div><i>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
+                    <div>Most expensive card from Card Kingdom:</div>
+                    <div><i>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
+                </Card>
               </Col>
               <Col>
 
@@ -79,7 +88,7 @@ export default class App extends React.Component {
                   <Col xs="auto">
                     <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
                       <CardHeader >
-                        CMC Breakdown
+                        <b>CMC Breakdown</b>
                         </CardHeader>
                       <BarChart width={500} height={300} data={this.state.cmcData}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -95,7 +104,7 @@ export default class App extends React.Component {
                   <Col xs="auto">
                     <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
                       <CardHeader>
-                        Type Distribution
+                        <b>Type Distribution</b>
                       </CardHeader>
                       <BarChart width={500} height={300} data={this.state.typeData}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -113,7 +122,7 @@ export default class App extends React.Component {
                   <Col xs="auto">
                     <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
                       <CardHeader>
-                        Color Breakdown
+                        <b>Color Breakdown</b>
                       </CardHeader>
                       <BarChart width={500} height={300} data={this.state.colorData}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -127,7 +136,7 @@ export default class App extends React.Component {
                   <Col xs="auto">
                     <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
                       <CardHeader>
-                        Color Pip Distribution
+                        <b>Color Pip Distribution</b>
                       </CardHeader>
                       <BarChart width={500} height={300} data={this.state.pipsData}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -211,6 +220,11 @@ export default class App extends React.Component {
       let colorRawData = {}
       let pipsRawData = {}
 
+      let tcgTotalCost = 0
+      let ckTotalCost = 0
+      let maxTCG = null
+      let maxCK = null
+
       for (let i = 0; i < jsonCards.length; i++) {
         // TODO 
         // Change the price from the prices array based on whether or not this card is foil :)
@@ -234,6 +248,22 @@ export default class App extends React.Component {
 
         let tmpTCGPrice = (jsonCards[i].modifier === "Foil") ? jsonCards[i].card.prices.tcgfoil : jsonCards[i].card.prices.tcg;
         let tmpCKPRice = (jsonCards[i].modifier === "Foil") ? jsonCards[i].card.prices.ckfoil : jsonCards[i].card.prices.ck;
+
+        tcgTotalCost += tmpTCGPrice * jsonCards[i].quantity
+        ckTotalCost += tmpCKPRice * jsonCards[i].quantity
+
+        // These could be merged, but I think it is more readable with seperate cases
+        if (maxTCG == null) {
+          maxTCG = {name: jsonCards[i].card.oracleCard.name, cost: tmpTCGPrice}
+        } else if (maxTCG.cost < tmpTCGPrice) {
+          maxTCG = {name: jsonCards[i].card.oracleCard.name, cost: tmpTCGPrice}
+        }
+
+        if (maxCK == null) {
+          maxCK = {name: jsonCards[i].card.oracleCard.name, cost: tmpCKPRice}
+        } else if (maxCK.cost < tmpCKPRice) {
+          maxCK = {name: jsonCards[i].card.oracleCard.name, cost: tmpCKPRice}
+        }
 
         let tmp = new MTGCard(jsonCards[i].card.oracleCard.name,
           jsonCards[i].card.oracleCard.colors,
@@ -315,6 +345,8 @@ export default class App extends React.Component {
           }
         }
 
+
+
         jsCards.push(tmp)
       }
 
@@ -351,8 +383,17 @@ export default class App extends React.Component {
         )
       })
 
+      /**
+       * <p>Total Cost from TCGPlayer: {this.state.TCGCost}</p>
+                    <p>Total Cost from Card Kingdom: {this.state.CKCost}</p>
+                    <p>Most Expensive card from TCGPlayer: {this.state.TCGMax}</p>
+                    <p>Most Expensive card from Card Kingdom: {this.state.CKMax}</p>
+       */
+
       // Set the deck in the state
-      this.setState({ deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false, cmcData: cmcData, typeData: typeData, colorData: colorData, pipsData: pipsData })
+      this.setState({ deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false, 
+        cmcData: cmcData, typeData: typeData, colorData: colorData, pipsData: pipsData,
+        TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK })
     });
   }
 };
