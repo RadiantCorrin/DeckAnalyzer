@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { Jumbotron, Card, CardBody, Button, Form, FormGroup, Input, Container, CardHeader, Spinner, Row, Col } from 'reactstrap';
+import { Jumbotron, Card, CardBody, Button, Form, FormGroup, Input, Container, CardHeader, Spinner, Row, Col, CardText } from 'reactstrap';
 import './App.css';
 import archidekt from 'archidekt'
 import ListEntry from './ListEntry';
+import Header from './Header'
 import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label } from 'recharts';
 
 export default class App extends React.Component {
@@ -17,47 +18,38 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <Jumbotron style={{ height: 200 }}>
-          <h1 className="display-10">Deck Analyzer</h1>
-          <hr></hr>
-          <p className="lead">A simple analysis tool for Magic: The Gathering decklists that are hosted on <a href="https://archidekt.com/">Archidekt</a> </p>
-        </Jumbotron>
+        <Header />
 
         {!this.state.loaded &&
           <Container fluid>
             <Card>
               <CardBody>
+                <p>
+                  Just put the URL to your deck below, and the Analyzer will display information about it!
+                </p>
+                <p>
+                  Right now, the Analyzer was designed for Commander decks. If your deck is not a Commander deck, the Analyzer may not work as intended.
+                </p>
                 <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
                     <Label for="deckURL">Deck URL</Label>
                     <Input
                       type="url"
                       name="url" id="inputURL"
-                      placeholder="put your Archidekt URL here!"
+                      placeholder="Archidekt URL goes here"
                       onChange={e => this.setState({ deckURL: e.target.value })}>
                     </Input>
                   </FormGroup>
                 </Form>
 
-                <Button onClick={this.loadDeck}>Load</Button>
-
-                <hr></hr>
-                {!this.state.loadingDeck && !this.state.loaded &&
-                  <Card>
-                    <CardHeader>No deck loaded yet!</CardHeader>
-                  </Card>}
+                {!this.state.loadingDeck && <Button onClick={this.loadDeck}>Load</Button>}
 
                 {this.state.loadError &&
                   <Card>
                     <CardHeader color="text-warning">Error loading decklist!</CardHeader>
                   </Card>}
 
-                {this.state.loadingDeck &&
-                  <Card>
-                    <CardHeader>
-                      <Spinner color="primary" />
-                    </CardHeader>
-                  </Card>}
+                {this.state.loadingDeck && <Spinner color="primary" />}
               </CardBody>
             </Card>
           </Container>}
@@ -99,6 +91,7 @@ export default class App extends React.Component {
                         <Tooltip />
                         <Bar dataKey="number" fill='#8884d8'></Bar>
                       </BarChart>
+                      <CardBody>Include lands?</CardBody>
                     </Card>
                   </Col>
                   <Col xs="auto">
