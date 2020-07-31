@@ -27,8 +27,6 @@ export default class App extends React.Component {
   render() {
     return (
       <div style={{ height: '100vh', width: "100vw" }}>
-
-
         {!this.state.loaded && <Header />}
 
         {!this.state.loaded &&
@@ -66,95 +64,6 @@ export default class App extends React.Component {
           </Container>}
 
         {this.state.loaded &&
-          // <Container fluid>
-          //   <Row>
-          //     <Col style={{ marginLeft: 40, maxWidth: '30%', minWidth: 300 }}>
-          // <Card>
-          //   <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
-          // </Card>
-          // <div style={{ display: 'block', maxWidth: '100%', maxHeight: 475, overflow: 'auto' }}>
-          //   {this.state.listOfCards}
-          // </div>
-          // <Card>
-          //     <p><b>Stats:</b></p>
-          //     <div>Total cost from TCGPlayer: <i>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
-          //     <div>Total cost from Card Kingdom: <i>{"$" + this.state.CKCost.toFixed(2)}</i></div>
-          //     <div>Most expensive card from TCGPlayer: </div>
-          //     <div><i>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
-          //     <div>Most expensive card from Card Kingdom:</div>
-          //     <div><i style={{color: 'blue'}}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
-          // </Card>
-          //     </Col>
-          //     <Col>
-
-          //       <Row>
-          //         <Col xs="auto">
-          // <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
-          //   <CardHeader >
-          //     <b>CMC Breakdown</b>
-          //     </CardHeader>
-          //   <BarChart width={500} height={300} data={this.state.cmcData}>
-          //     <CartesianGrid strokeDasharray="3 3" />
-          //     <XAxis dataKey="cmc">
-          //       <Label value="CMC" position="insideBottom" offset={-5}></Label>
-          //     </XAxis>
-          //     <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
-          //     <Tooltip />
-          //     <Bar dataKey="number" fill='#8884d8'></Bar>
-          //   </BarChart>
-          //   <CardBody>Include lands?</CardBody>
-          // </Card>
-          //         </Col>
-          //         <Col xs="auto">
-          // <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
-          //   <CardHeader>
-          //     <b>Type Distribution</b>
-          //   </CardHeader>
-          //   <BarChart width={500} height={300} data={this.state.typeData}>
-          //     <CartesianGrid strokeDasharray="3 3" />
-          //     <XAxis dataKey="type">
-          //       <Label value="Card Type" position="insideBottom" offset={-5}></Label>
-          //     </XAxis>
-          //     <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
-          //     <Tooltip />
-          //     <Bar dataKey="number" fill='#1ab886'></Bar>
-          //   </BarChart>
-          // </Card>
-          //         </Col>
-          //       </Row>
-          //       <Row>
-          //         <Col xs="auto">
-          //           <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
-          //             <CardHeader>
-          //               <b>Color Breakdown</b>
-          //             </CardHeader>
-          // <BarChart width={500} height={300} data={this.state.colorData}>
-          // <CartesianGrid strokeDasharray="3 3" />
-          //   <XAxis dataKey="color"></XAxis>
-          //   <YAxis></YAxis>
-          //   <Tooltip />
-          //   <Bar dataKey="number" fill='#4b71db'></Bar>
-          // </BarChart>
-          //           </Card>
-          //         </Col>
-          //         <Col xs="auto">
-          //           <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
-          //             <CardHeader>
-          //               <b>Color Pip Distribution</b>
-          //             </CardHeader>
-          // <BarChart width={500} height={300} data={this.state.pipsData}>
-          //   <CartesianGrid strokeDasharray="3 3" />
-          //   <XAxis dataKey="color"></XAxis>
-          //   <YAxis></YAxis>
-          //   <Tooltip />
-          //   <Bar dataKey="number" fill='#ed6666'></Bar>
-          // </BarChart>
-          //           </Card>
-          //         </Col>
-          //       </Row>
-          //     </Col>
-          //   </Row>
-          // </Container>
           <div className="customContainer">
             <div className="header">
               <Header />
@@ -211,7 +120,6 @@ export default class App extends React.Component {
                   <Bar dataKey="number" fill='#1ab886'></Bar>
                 </BarChart>
               </ResponsiveContainer>
-
             </div>
             <div className="boxthree">
               <Card>
