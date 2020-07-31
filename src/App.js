@@ -6,7 +6,7 @@ import './container.css'
 import archidekt from 'archidekt'
 import ListEntry from './ListEntry';
 import Header from './Header'
-import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label, ResponsiveContainer } from 'recharts';
+import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label, ResponsiveContainer, Cell } from 'recharts';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -22,6 +22,17 @@ export default class App extends React.Component {
     this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false, testData: testData };
     this.loadDeck = this.loadDeck.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this)
+
+    // const CustomBar = (props) => {
+    //   const {years, fill} = props;
+    //   //business logic here to update fill color explicitly
+    //   if(years === 'Current') {
+    //       fill='#NewFillColor';
+    //   }
+    
+    //   //use explicit fill here, or use the additional css class and make a css selector to update fill there
+    //   return <Rectangle {...props} fill={fill} className=`recharts-bar-rectangle ${years}` />
+    // };
   }
 
   render() {
@@ -77,10 +88,10 @@ export default class App extends React.Component {
               </div>
               <Card style={{ maxHeight: "25%", overflow: 'auto' }}>
                 <p><b>Stats:</b></p>
-                <div>Total cost from TCGPlayer: <i>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
-                <div>Total cost from Card Kingdom: <i>{"$" + this.state.CKCost.toFixed(2)}</i></div>
+                <div>Total cost from TCGPlayer: <i style={{ color: 'blue' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
+                <div>Total cost from Card Kingdom: <i style={{ color: 'blue' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
                 <div>Most expensive card from TCGPlayer: </div>
-                <div><i>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
+                <div><i style={{ color: 'blue' }}>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
                 <div>Most expensive card from Card Kingdom:</div>
                 <div><i style={{ color: 'blue' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
               </Card>
@@ -133,14 +144,22 @@ export default class App extends React.Component {
                   <XAxis dataKey="color"></XAxis>
                   <YAxis></YAxis>
                   <Tooltip />
-                  <Bar dataKey="number" fill='#4b71db'></Bar>
+                  {/* fill='#4b71db' */}
+                  <Bar dataKey="number">
+                  {
+                    this.state.colorData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />
+                    ))
+                  }
+                  </Bar>
+                  
                 </BarChart>
               </ResponsiveContainer>
             </div>
             <div className="boxfour">
               <Card>
                 <CardHeader>
-                  <b>Type Distribution</b>
+                  <b>Number of Colored Pips</b>
                 </CardHeader>
               </Card>
               <ResponsiveContainer height="85%" width="95%">
@@ -149,7 +168,14 @@ export default class App extends React.Component {
                   <XAxis dataKey="color"></XAxis>
                   <YAxis></YAxis>
                   <Tooltip />
-                  <Bar dataKey="number" fill='#ed6666'></Bar>
+                  <Bar dataKey="number">
+                  {
+                    this.state.pipsData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />
+                    ))
+                  }
+                  </Bar>
+                  
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -373,9 +399,12 @@ export default class App extends React.Component {
         colorData.push({ color: key2, number: colorRawData[key2] })
       }
 
-      // Put the color data in the form for the charts
+      // Put the pip data in the form for the charts
+      //
+      let colorMap = {White: "#eaebd1", Blue: "#4287f5", Black: "#242526", Red: "#de2f2f", Green: "#38e051"}
       let pipsData = []
       for (var key3 in pipsRawData) {
+        console.log(colorMap[key3])
         pipsData.push({ color: key3, number: pipsRawData[key3] })
       }
 
@@ -397,7 +426,8 @@ export default class App extends React.Component {
       this.setState({
         deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false,
         cmcData: cmcData, typeData: typeData, colorData: colorData, pipsData: pipsData,
-        TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK
+        TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK,
+        colors: colorMap
       })
     });
   }
