@@ -9,6 +9,7 @@
     "archidekt": "0.0.14",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
+    "nivo": "^0.31.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",

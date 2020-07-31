@@ -1,0 +1,50 @@
+.customContainer {
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr;
+    grid-template-rows: 1fr 2fr 2fr;
+    grid-template-areas:
+    "header header header"
+    "sidebar boxone boxtwo"
+    "sidebar boxthree boxfour";
+    height: 100%;
+    
+}
+.header {
+    grid-area: header; 
+}
+
+.sidebar {
+    grid-area: sidebar;
+    /* padding-top: 10px; */
+    padding-right: 5px; 
+    padding-bottom: 10px; 
+    padding-left: 10px;
+  }
+  .boxone {
+    grid-area: boxone;
+    /* padding-top: 10px; */
+    padding-right: 5px; 
+    padding-bottom: 5px; 
+    padding-left: 5px;
+  }
+  .boxtwo {
+    grid-area: boxtwo;
+    /* padding-top: 10px; */
+    padding-right: 10px; 
+    padding-bottom: 5px; 
+    padding-left: 5px;
+  }
+  .boxthree {
+    grid-area: boxthree;
+    padding-top: 5px;
+    padding-right: 5px; 
+    padding-bottom: 10px; 
+    padding-left: 5px;
+  }
+  .boxfour {
+    grid-area: boxfour;
+    padding-top: 5px;
+    padding-right: 10px; 
+    padding-bottom: 10px; 
+    padding-left: 5px;
+  }

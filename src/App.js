@@ -2,23 +2,34 @@
 import React from 'react';
 import { Jumbotron, Card, CardBody, Button, Form, FormGroup, Input, Container, CardHeader, Spinner, Row, Col, CardText } from 'reactstrap';
 import './App.css';
+import './container.css'
 import archidekt from 'archidekt'
 import ListEntry from './ListEntry';
 import Header from './Header'
-import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label } from 'recharts';
+import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label, ResponsiveContainer } from 'recharts';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false };
+
+    let testData = [
+      {
+        id: 3,
+        value: "nice"
+      }
+    ]
+
+    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false, testData: testData };
     this.loadDeck = this.loadDeck.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this)
   }
 
   render() {
     return (
-      <div>
-        <Header />
+      <div style={{ height: '100vh', width: "100vw" }}>
+
+
+        {!this.state.loaded && <Header />}
 
         {!this.state.loaded &&
           <Container fluid>
@@ -55,101 +66,192 @@ export default class App extends React.Component {
           </Container>}
 
         {this.state.loaded &&
-          <Container fluid>
-            <Row>
-              <Col style={{ marginLeft: 40, maxWidth: '30%', minWidth: 300 }}>
-                <Card>
-                  <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
-                </Card>
-                <div style={{ display: 'block', maxWidth: '100%', maxHeight: 475, overflow: 'auto' }}>
-                  {this.state.listOfCards}
-                </div>
-                <Card>
-                    <p><b>Stats:</b></p>
-                    <div>Total cost from TCGPlayer: <i>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
-                    <div>Total cost from Card Kingdom: <i>{"$" + this.state.CKCost.toFixed(2)}</i></div>
-                    <div>Most expensive card from TCGPlayer: </div>
-                    <div><i>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
-                    <div>Most expensive card from Card Kingdom:</div>
-                    <div><i>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
-                </Card>
-              </Col>
-              <Col>
+          // <Container fluid>
+          //   <Row>
+          //     <Col style={{ marginLeft: 40, maxWidth: '30%', minWidth: 300 }}>
+          // <Card>
+          //   <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
+          // </Card>
+          // <div style={{ display: 'block', maxWidth: '100%', maxHeight: 475, overflow: 'auto' }}>
+          //   {this.state.listOfCards}
+          // </div>
+          // <Card>
+          //     <p><b>Stats:</b></p>
+          //     <div>Total cost from TCGPlayer: <i>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
+          //     <div>Total cost from Card Kingdom: <i>{"$" + this.state.CKCost.toFixed(2)}</i></div>
+          //     <div>Most expensive card from TCGPlayer: </div>
+          //     <div><i>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
+          //     <div>Most expensive card from Card Kingdom:</div>
+          //     <div><i style={{color: 'blue'}}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
+          // </Card>
+          //     </Col>
+          //     <Col>
 
-                <Row>
-                  <Col xs="auto">
-                    <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
-                      <CardHeader >
-                        <b>CMC Breakdown</b>
-                        </CardHeader>
-                      <BarChart width={500} height={300} data={this.state.cmcData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="cmc">
-                          <Label value="CMC" position="insideBottom" offset={-5}></Label>
-                        </XAxis>
-                        <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
-                        <Tooltip />
-                        <Bar dataKey="number" fill='#8884d8'></Bar>
-                      </BarChart>
-                      <CardBody>Include lands?</CardBody>
-                    </Card>
-                  </Col>
-                  <Col xs="auto">
-                    <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
-                      <CardHeader>
-                        <b>Type Distribution</b>
-                      </CardHeader>
-                      <BarChart width={500} height={300} data={this.state.typeData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="type">
-                          <Label value="Card Type" position="insideBottom" offset={-5}></Label>
-                        </XAxis>
-                        <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
-                        <Tooltip />
-                        <Bar dataKey="number" fill='#1ab886'></Bar>
-                      </BarChart>
-                    </Card>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs="auto">
-                    <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
-                      <CardHeader>
-                        <b>Color Breakdown</b>
-                      </CardHeader>
-                      <BarChart width={500} height={300} data={this.state.colorData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="color"></XAxis>
-                        <YAxis></YAxis>
-                        <Tooltip />
-                        <Bar dataKey="number" fill='#4b71db'></Bar>
-                      </BarChart>
-                    </Card>
-                  </Col>
-                  <Col xs="auto">
-                    <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
-                      <CardHeader>
-                        <b>Color Pip Distribution</b>
-                      </CardHeader>
-                      <BarChart width={500} height={300} data={this.state.pipsData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="color"></XAxis>
-                        <YAxis></YAxis>
-                        <Tooltip />
-                        <Bar dataKey="number" fill='#ed6666'></Bar>
-                      </BarChart>
-                    </Card>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Container>
+          //       <Row>
+          //         <Col xs="auto">
+          // <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
+          //   <CardHeader >
+          //     <b>CMC Breakdown</b>
+          //     </CardHeader>
+          //   <BarChart width={500} height={300} data={this.state.cmcData}>
+          //     <CartesianGrid strokeDasharray="3 3" />
+          //     <XAxis dataKey="cmc">
+          //       <Label value="CMC" position="insideBottom" offset={-5}></Label>
+          //     </XAxis>
+          //     <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
+          //     <Tooltip />
+          //     <Bar dataKey="number" fill='#8884d8'></Bar>
+          //   </BarChart>
+          //   <CardBody>Include lands?</CardBody>
+          // </Card>
+          //         </Col>
+          //         <Col xs="auto">
+          // <Card style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}>
+          //   <CardHeader>
+          //     <b>Type Distribution</b>
+          //   </CardHeader>
+          //   <BarChart width={500} height={300} data={this.state.typeData}>
+          //     <CartesianGrid strokeDasharray="3 3" />
+          //     <XAxis dataKey="type">
+          //       <Label value="Card Type" position="insideBottom" offset={-5}></Label>
+          //     </XAxis>
+          //     <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
+          //     <Tooltip />
+          //     <Bar dataKey="number" fill='#1ab886'></Bar>
+          //   </BarChart>
+          // </Card>
+          //         </Col>
+          //       </Row>
+          //       <Row>
+          //         <Col xs="auto">
+          //           <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
+          //             <CardHeader>
+          //               <b>Color Breakdown</b>
+          //             </CardHeader>
+          // <BarChart width={500} height={300} data={this.state.colorData}>
+          // <CartesianGrid strokeDasharray="3 3" />
+          //   <XAxis dataKey="color"></XAxis>
+          //   <YAxis></YAxis>
+          //   <Tooltip />
+          //   <Bar dataKey="number" fill='#4b71db'></Bar>
+          // </BarChart>
+          //           </Card>
+          //         </Col>
+          //         <Col xs="auto">
+          //           <Card style={{ width: 550, height: 350, minWidth: 550, minHeight: 350 }}>
+          //             <CardHeader>
+          //               <b>Color Pip Distribution</b>
+          //             </CardHeader>
+          // <BarChart width={500} height={300} data={this.state.pipsData}>
+          //   <CartesianGrid strokeDasharray="3 3" />
+          //   <XAxis dataKey="color"></XAxis>
+          //   <YAxis></YAxis>
+          //   <Tooltip />
+          //   <Bar dataKey="number" fill='#ed6666'></Bar>
+          // </BarChart>
+          //           </Card>
+          //         </Col>
+          //       </Row>
+          //     </Col>
+          //   </Row>
+          // </Container>
+          <div className="customContainer">
+            <div className="header">
+              <Header />
+            </div>
+            <div className="sidebar" style={{ minWidth: "375px" }}>
+              <Card style={{ maxHeight: '10%' }}>
+                <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
+              </Card>
+              <div style={{ display: 'block', maxHeight: "65%", overflow: 'auto' }}>
+                {this.state.listOfCards}
+              </div>
+              <Card style={{ maxHeight: "25%", overflow: 'auto' }}>
+                <p><b>Stats:</b></p>
+                <div>Total cost from TCGPlayer: <i>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
+                <div>Total cost from Card Kingdom: <i>{"$" + this.state.CKCost.toFixed(2)}</i></div>
+                <div>Most expensive card from TCGPlayer: </div>
+                <div><i>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
+                <div>Most expensive card from Card Kingdom:</div>
+                <div><i style={{ color: 'blue' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
+              </Card>
+            </div>
+            <div className="boxone" style={{}}>
+              <Card>
+                <CardHeader >
+                  <b>CMC Breakdown</b>
+                </CardHeader>
+              </Card>
+              <ResponsiveContainer height="85%" width="95%">
+                <BarChart data={this.state.cmcData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="cmc">
+                    <Label value="CMC" position="insideBottom" offset={-5}></Label>
+                  </XAxis>
+                  <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
+                  <Tooltip />
+                  <Bar dataKey="number" fill='#8884d8'></Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="boxtwo">
+              <Card>
+                <CardHeader>
+                  <b>Type Distribution</b>
+                </CardHeader>
+              </Card>
+              <ResponsiveContainer height="85%" width="95%">
+                <BarChart data={this.state.typeData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="type">
+                    <Label value="Card Type" position="insideBottom" offset={-5}></Label>
+                  </XAxis>
+                  <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
+                  <Tooltip />
+                  <Bar dataKey="number" fill='#1ab886'></Bar>
+                </BarChart>
+              </ResponsiveContainer>
 
+            </div>
+            <div className="boxthree">
+              <Card>
+                <CardHeader>
+                  <b>Color Breakdown</b>
+                </CardHeader>
+              </Card>
+              <ResponsiveContainer height="85%" width="95%">
+                <BarChart data={this.state.colorData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="color"></XAxis>
+                  <YAxis></YAxis>
+                  <Tooltip />
+                  <Bar dataKey="number" fill='#4b71db'></Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="boxfour">
+              <Card>
+                <CardHeader>
+                  <b>Type Distribution</b>
+                </CardHeader>
+              </Card>
+              <ResponsiveContainer height="85%" width="95%">
+                <BarChart data={this.state.pipsData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="color"></XAxis>
+                  <YAxis></YAxis>
+                  <Tooltip />
+                  <Bar dataKey="number" fill='#ed6666'></Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         }
-        <hr></hr>
       </div>
     );
   }
+
+  //style={{ width: 550, height: 370, minWidth: 550, minHeight: 360 }}
 
   // Allows enter to submit the form, and prevents the page from refreshing.
   handleKeyPress(event) {
@@ -247,15 +349,15 @@ export default class App extends React.Component {
 
         // These could be merged, but I think it is more readable with seperate cases
         if (maxTCG == null) {
-          maxTCG = {name: jsonCards[i].card.oracleCard.name, cost: tmpTCGPrice}
+          maxTCG = { name: jsonCards[i].card.oracleCard.name, cost: tmpTCGPrice }
         } else if (maxTCG.cost < tmpTCGPrice) {
-          maxTCG = {name: jsonCards[i].card.oracleCard.name, cost: tmpTCGPrice}
+          maxTCG = { name: jsonCards[i].card.oracleCard.name, cost: tmpTCGPrice }
         }
 
         if (maxCK == null) {
-          maxCK = {name: jsonCards[i].card.oracleCard.name, cost: tmpCKPRice}
+          maxCK = { name: jsonCards[i].card.oracleCard.name, cost: tmpCKPRice }
         } else if (maxCK.cost < tmpCKPRice) {
-          maxCK = {name: jsonCards[i].card.oracleCard.name, cost: tmpCKPRice}
+          maxCK = { name: jsonCards[i].card.oracleCard.name, cost: tmpCKPRice }
         }
 
         let tmp = new MTGCard(jsonCards[i].card.oracleCard.name,
@@ -384,9 +486,11 @@ export default class App extends React.Component {
        */
 
       // Set the deck in the state
-      this.setState({ deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false, 
+      this.setState({
+        deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false,
         cmcData: cmcData, typeData: typeData, colorData: colorData, pipsData: pipsData,
-        TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK })
+        TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK
+      })
     });
   }
 };
