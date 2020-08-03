@@ -30,7 +30,7 @@ export default class ListEntry extends React.Component {
         return (
             <tr>
                 <td>
-                    <div style={{ textAlign: "left", paddingLeft: "10px" }}>
+                    <div style={{ textAlign: "left",  }}>
                         {(this.card.modifier === "Foil") ? "FOIL " : ""}{this.card.name} ({this.card.setCode.toUpperCase()})
                     </div>
                 </td>

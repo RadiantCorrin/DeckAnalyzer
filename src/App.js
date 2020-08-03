@@ -12,9 +12,13 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false };
+    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false, includeLandsCMC: false };
     this.loadDeck = this.loadDeck.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this)
+
+    this.cmcIncludeLandsCheck = this.cmcIncludeLandsCheck.bind(this)
+
+    console.log(this.state.includeLandsCMC)
   }
 
   render() {
@@ -32,7 +36,7 @@ export default class App extends React.Component {
                   Just put the URL to your deck below, and the Analyzer will display information about it!
                 </p>
                 <p>
-                  Right now, the Analyzer was designed for Commander decks. If your deck is not a Commander deck, the Analyzer may not work as intended.
+                  Currently, the Analyzer has only been tested with Commander decks. If your deck is not a Commander deck, the Analyzer may not work as intended!
                 </p>
                 <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
@@ -68,7 +72,7 @@ export default class App extends React.Component {
               <Card style={{ maxHeight: '10%' }}>
                 <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
               </Card>
-              <div style={{ display: 'block', maxHeight: "65%", overflow: 'auto' }}>
+              <div style={{ display: 'block', maxHeight: "65%", overflow: 'auto', border: "1px solid LightGray"}}>
                 <table>
                   <tbody>
                     {this.state.listOfCards}
@@ -77,13 +81,13 @@ export default class App extends React.Component {
                 
               </div>
               <Card style={{ maxHeight: "25%", overflow: 'auto' }}>
-                <p><b>Stats:</b></p>
-                <div>Total cost from TCGPlayer: <i style={{ color: 'blue' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
-                <div>Total cost from Card Kingdom: <i style={{ color: 'blue' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
+                <p style={{paddingLeft: "18px" }}><b>Stats:</b></p>
+                <div>Total cost from TCGPlayer: <i style={{ color: 'green' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
+                <div>Total cost from Card Kingdom: <i style={{ color: 'green' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
                 <div>Most expensive card from TCGPlayer: </div>
-                <div><i style={{ color: 'blue' }}>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
+                <div><i style={{ color: 'green' }}>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
                 <div>Most expensive card from Card Kingdom:</div>
-                <div><i style={{ color: 'blue' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
+                <div><i style={{ color: 'green' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
               </Card>
             </div>
             <div className="boxone" style={{}}>
@@ -103,6 +107,12 @@ export default class App extends React.Component {
                   <Bar dataKey="number" fill='#8884d8'></Bar>
                 </BarChart>
               </ResponsiveContainer>
+              <form>
+                <label>
+                  <input type="checkbox" onChange={this.cmcIncludeLandsCheck} ></input>
+                  {' '}Include Lands
+                  </label>
+              </form>
             </div>
             <div className="boxtwo">
               <Card>
@@ -172,6 +182,10 @@ export default class App extends React.Component {
         }
       </div>
     );
+  }
+
+  cmcIncludeLandsCheck() {
+    this.setState({includeLandsCMC: !this.state.includeLandsCMC})
   }
 
   /**
@@ -361,38 +375,6 @@ export default class App extends React.Component {
             default:
               break;
           }
-
-          // if (ch === "W") {
-          //   if ("White" in pipsRawData) {
-          //     pipsRawData["White"]++
-          //   } else {
-          //     pipsRawData["White"] = 1
-          //   }
-          // } else if (ch === "U") {
-          //   if ("Blue" in pipsRawData) {
-          //     pipsRawData["Blue"]++
-          //   } else {
-          //     pipsRawData["Blue"] = 1
-          //   }
-          // } else if (ch === "B") {
-          //   if ("Black" in pipsRawData) {
-          //     pipsRawData["Black"]++
-          //   } else {
-          //     pipsRawData["Black"] = 1
-          //   }
-          // } else if (ch === "R") {
-          //   if ("Red" in pipsRawData) {
-          //     pipsRawData["Red"]++
-          //   } else {
-          //     pipsRawData["Red"] = 1
-          //   }
-          // } else if (ch === "G") {
-          //   if ("Green" in pipsRawData) {
-          //     pipsRawData["Green"]++
-          //   } else {
-          //     pipsRawData["Green"] = 1
-          //   }
-          // }
         }
 
         jsCards.push(tmp)
