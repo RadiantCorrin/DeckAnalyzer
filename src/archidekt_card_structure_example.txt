@@ -1,0 +1,30 @@
+card:
+artist: "Yeong-Hao Han"
+ckFoilId: 196190
+ckNormalId: 195623
+cmEd: "khans of tarkir"
+collectorNumber: "248"
+edition: {editioncode: "ktk", editionname: "Khans of Tarkir", mtgoCode: "ktk"}
+flavor: "Where dragons once roared, their bones now keen."
+games: (2) [1, 2]
+id: 43822
+mtgoFoilId: 54203
+mtgoNormalId: 54202
+multiverseid: 386725
+options: (2) ["Normal", "Foil"]
+oracleCard: {colors: Array(0), colorIdentity: Array(0), types: Array(1), subTypes: Array(0), superTypes: Array(0), …}
+owned: 0
+prices: {ck: 19.99, ckfoil: 37.99, tcg: 14.73, tcgfoil: 29.19, mtgo: 5.23, …}
+rarity: "rare"
+tcgProductId: 92832
+uid: "e7b28650-cddc-4878-b1d1-b5a764f4df49"
+__proto__: Object
+categories: Array(1)
+0: "Maybeboard"
+length: 1
+__proto__: Array(0)
+category: ""
+label: ",#656565"
+modifier: "Normal"
+quantity: 1
+__proto__: Object
