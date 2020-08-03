@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Jumbotron, Card, CardBody, Button, Form, FormGroup, Input, Container, CardHeader, Spinner, Row, Col, CardText } from 'reactstrap';
+import { Card, CardBody, Button, Form, FormGroup, Input, Container, CardHeader, Spinner } from 'reactstrap';
 import './App.css';
 import './container.css'
 import archidekt from 'archidekt'
