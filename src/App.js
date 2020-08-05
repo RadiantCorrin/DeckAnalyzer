@@ -97,7 +97,7 @@ export default class App extends React.Component {
                 </CardHeader>
               </Card>
               <ResponsiveContainer height="85%" width="95%">
-                <BarChart data={this.state.cmcData}>
+                <BarChart data={(this.state.includeLandsCMC) ? this.state.cmcData : this.state.cmcDataNoLands}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="cmc">
                     <Label value="CMC" position="insideBottom" offset={-5}></Label>
@@ -247,6 +247,7 @@ export default class App extends React.Component {
       let jsCards = []
 
       let cmcRawData = {}
+      let cmcRawDataNoLands = {}
       let typeRawData = {}
       let colorRawData = {}
       let pipsRawData = {}
@@ -302,9 +303,19 @@ export default class App extends React.Component {
         // Add the CMC of this card to the raw values for the deck
         let key = "" + tmp.cmc
         if (key in cmcRawData) {
-          cmcRawData[key] = cmcRawData[key] + 1
+          cmcRawData[key] = cmcRawData[key] + (1 * jsonCards[i].quantity)
         } else {
-          cmcRawData[key] = 1
+          cmcRawData[key] = (1 * jsonCards[i].quantity)
+        }
+
+        // Add this card to the raw types for NONLANDS if this card is not a land
+        console.log(tmp.types + " " + tmp.name)
+        if (!tmp.types.includes("Land")) {
+          if (key in cmcRawDataNoLands) {
+            cmcRawDataNoLands[key] = cmcRawDataNoLands[key] + 1
+          } else {
+            cmcRawDataNoLands[key] = 1
+          }
         }
 
         // Add the types of this card to the raw values of the deck
@@ -386,6 +397,12 @@ export default class App extends React.Component {
         cmcData.push({ cmc: key, number: cmcRawData[key] })
       }
 
+      // Put the CMC data in the form the charts need (objects)
+      let cmcDataNoLands = []
+      for (var keyNoLands in cmcRawDataNoLands) {
+        cmcDataNoLands.push({ cmc: keyNoLands, number: cmcRawDataNoLands[keyNoLands] })
+      }
+
       // Put the type data in the form that the charts need
       let typeData = []
       for (var key1 in typeRawData) {
@@ -413,10 +430,13 @@ export default class App extends React.Component {
         )
       })
 
+      console.log(cmcData)
+      console.log(cmcDataNoLands)
+
       // Store all of the analysis data in the state for the other components to use
       this.setState({
         deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false,
-        cmcData: cmcData, typeData: typeData, colorData: colorData, pipsData: pipsData,
+        cmcData: cmcData, cmcDataNoLands: cmcDataNoLands, typeData: typeData, colorData: colorData, pipsData: pipsData,
         TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK,
         colors: colorMap
       })

@@ -36,14 +36,14 @@ export default class ListEntry extends React.Component {
                 </td>
                 <td>
                     <div style={{ textAlign: "left", paddingLeft: "10px" }}>
-                        <a href={this.tcgURL}>
+                        <a href={this.tcgURL} target="_blank">
                             {(this.card.tcgprice > 0) ? '$' + this.card.tcgprice : "No TCG Price"}
                         </a>
                     </div>
                 </td>
                 <td>
                     <div style={{ textAlign: "left", paddingLeft: "10px" }}>
-                        <a href={this.ckURL}>
+                        <a href={this.ckURL} target="_blank">
                             {(this.card.ckprice > 0) ? '$' + this.card.ckprice : "No CK Price"}
                         </a>
                     </div>
