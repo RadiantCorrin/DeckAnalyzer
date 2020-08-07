@@ -12,13 +12,13 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false, includeLandsCMC: false };
+    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false, cmcIncludeLands: false, colorIncludeColorless: false, pipsIncludeColorless: false };
     this.loadDeck = this.loadDeck.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this)
 
     this.cmcIncludeLandsCheck = this.cmcIncludeLandsCheck.bind(this)
-
-    console.log(this.state.includeLandsCMC)
+    this.colorIncludeColorlessCheck = this.colorIncludeColorlessCheck.bind(this)
+    this.pipsIncludeColorlessCheck = this.pipsIncludeColorlessCheck.bind(this)
   }
 
   render() {
@@ -96,8 +96,8 @@ export default class App extends React.Component {
                   <b>CMC Breakdown</b>
                 </CardHeader>
               </Card>
-              <ResponsiveContainer height="85%" width="95%">
-                <BarChart data={(this.state.includeLandsCMC) ? this.state.cmcData : this.state.cmcDataNoLands}>
+              <ResponsiveContainer height="75%" width="95%">
+                <BarChart data={(this.state.cmcIncludeLands) ? this.state.cmcData : this.state.cmcDataNoLands}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="cmc">
                     <Label value="CMC" position="insideBottom" offset={-5}></Label>
@@ -120,7 +120,7 @@ export default class App extends React.Component {
                   <b>Type Distribution</b>
                 </CardHeader>
               </Card>
-              <ResponsiveContainer height="85%" width="95%">
+              <ResponsiveContainer height="75%" width="95%">
                 <BarChart data={this.state.typeData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="type">
@@ -138,22 +138,30 @@ export default class App extends React.Component {
                   <b>Color Breakdown</b>
                 </CardHeader>
               </Card>
-              <ResponsiveContainer height="85%" width="95%">
-                <BarChart data={this.state.colorData}>
+              <ResponsiveContainer height="75%" width="95%">
+                <BarChart data={(this.state.colorIncludeColorless) ? this.state.colorDataWithColorless : this.state.colorData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="color"></XAxis>
                   <YAxis></YAxis>
                   <Tooltip />
                   <Bar dataKey="number">
                   {
+                    (this.state.colorIncludeColorless) ? 
+                    this.state.colorDataWithColorless.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />)) 
+                    : 
                     this.state.colorData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />
-                    ))
+                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
                   }
                   </Bar>
-                  
                 </BarChart>
               </ResponsiveContainer>
+              <form>
+                <label>
+                  <input type="checkbox" onChange={this.colorIncludeColorlessCheck} ></input>
+                  {' '}Include Colorless
+                  </label>
+              </form>
             </div>
             <div className="boxfour">
               <Card>
@@ -161,22 +169,30 @@ export default class App extends React.Component {
                   <b>Number of Colored Pips</b>
                 </CardHeader>
               </Card>
-              <ResponsiveContainer height="85%" width="95%">
-                <BarChart data={this.state.pipsData}>
+              <ResponsiveContainer height="75%" width="95%">
+                <BarChart data={(this.state.pipsIncludeColorless) ? this.state.pipsDataWithColorless : this.state.pipsData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="color"></XAxis>
                   <YAxis></YAxis>
                   <Tooltip />
                   <Bar dataKey="number">
                   {
+                    (this.state.pipsIncludeColorless) ? 
+                    this.state.pipsDataWithColorless.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />)) 
+                    : 
                     this.state.pipsData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />
-                    ))
+                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
                   }
                   </Bar>
-                  
                 </BarChart>
               </ResponsiveContainer>
+              <form>
+                <label>
+                  <input type="checkbox" onChange={this.pipsIncludeColorlessCheck} ></input>
+                  {' '}Include Colorless Pips
+                  </label>
+              </form>
             </div>
           </div>
         }
@@ -185,7 +201,15 @@ export default class App extends React.Component {
   }
 
   cmcIncludeLandsCheck() {
-    this.setState({includeLandsCMC: !this.state.includeLandsCMC})
+    this.setState({cmcIncludeLands: !this.state.cmcIncludeLands})
+  }
+
+  colorIncludeColorlessCheck() {
+    this.setState({colorIncludeColorless: !this.state.colorIncludeColorless})
+  }
+
+  pipsIncludeColorlessCheck() {
+    this.setState({pipsIncludeColorless: !this.state.pipsIncludeColorless})
   }
 
   /**
@@ -250,7 +274,9 @@ export default class App extends React.Component {
       let cmcRawDataNoLands = {}
       let typeRawData = {}
       let colorRawData = {}
+      let numColorless = 0
       let pipsRawData = {}
+      let numColorlessPips = 0
 
       let tcgTotalCost = 0
       let ckTotalCost = 0
@@ -309,7 +335,6 @@ export default class App extends React.Component {
         }
 
         // Add this card to the raw types for NONLANDS if this card is not a land
-        console.log(tmp.types + " " + tmp.name)
         if (!tmp.types.includes("Land")) {
           if (key in cmcRawDataNoLands) {
             cmcRawDataNoLands[key] = cmcRawDataNoLands[key] + 1
@@ -337,6 +362,10 @@ export default class App extends React.Component {
           } else {
             colorRawData[color] = 1
           }
+        }
+        // Make sure to count this card as colorless if it is! (lands don't count :) )
+        if (tmp.colors.length === 0 && !tmp.types.includes("Land")) {
+          numColorless++
         }
 
         // TODO: Needs support for colorless mana symbols
@@ -383,6 +412,11 @@ export default class App extends React.Component {
                 pipsRawData["Green"] = 1
               }
               break;
+            case "C":
+              if (!tmp.types.includes("Land")) {
+                numColorlessPips++
+              }
+              break
             default:
               break;
           }
@@ -415,12 +449,26 @@ export default class App extends React.Component {
         colorData.push({ color: key2, number: colorRawData[key2] })
       }
 
+      // Create a color data set that also includes the colorless nonland cards
+
+      // let colorDataWithColorless = []
+      let colorDataWithColorless = JSON.parse(JSON.stringify(colorData))
+      if (numColorless > 0) {
+        colorDataWithColorless.push({color: "Colorless", number: numColorless})
+      }
+
       // Put the pip data in the form for the charts
-      let colorMap = {White: "#eaebd1", Blue: "#4287f5", Black: "#242526", Red: "#de2f2f", Green: "#38e051"}
+      // 38e051
+      let colorMap = {Colorless: "#d7d8db", White: "#eaebd1", Blue: "#4287f5", Black: "#242526", Red: "#de2f2f", Green: "#38e051", }
       let pipsData = []
       for (var key3 in pipsRawData) {
         pipsData.push({ color: key3, number: pipsRawData[key3] })
       }
+
+      // Create the dataset that includes colorless cards
+      let pipsDataWithColorless = JSON.parse(JSON.stringify(pipsData))
+      if (numColorlessPips > 0)
+        pipsDataWithColorless.push({color: 'Colorless', number: numColorlessPips})
 
       // Map the JS cards to react elements, and store those elements in a list. This list
       // will be
@@ -430,15 +478,18 @@ export default class App extends React.Component {
         )
       })
 
-      console.log(cmcData)
-      console.log(cmcDataNoLands)
+      console.log(colorData)
+      console.log(colorDataWithColorless)
+      
+
+      console.log(colorMap["Colorless"])
 
       // Store all of the analysis data in the state for the other components to use
       this.setState({
         deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false,
         cmcData: cmcData, cmcDataNoLands: cmcDataNoLands, typeData: typeData, colorData: colorData, pipsData: pipsData,
         TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK,
-        colors: colorMap
+        colors: colorMap, colorDataWithColorless: colorDataWithColorless, pipsDataWithColorless: pipsDataWithColorless
       })
     });
   }
