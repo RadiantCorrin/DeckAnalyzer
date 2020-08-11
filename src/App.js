@@ -38,6 +38,9 @@ export default class App extends React.Component {
                 <p>
                   Currently, the Analyzer has only been tested with Commander decks. If your deck is not a Commander deck, the Analyzer may not work as intended!
                 </p>
+                <p>
+                  You can use this link as an example, if you want: <a href="https://archidekt.com/decks/468872">https://archidekt.com/decks/468872</a>
+                </p>
                 <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
                     <Label for="deckURL">Deck URL</Label>
@@ -72,16 +75,16 @@ export default class App extends React.Component {
               <Card style={{ maxHeight: '10%' }}>
                 <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
               </Card>
-              <div style={{ display: 'block', maxHeight: "65%", overflow: 'auto', border: "1px solid LightGray"}}>
+              <div style={{ display: 'block', maxHeight: "65%", overflow: 'auto', border: "1px solid LightGray" }}>
                 <table>
                   <tbody>
                     {this.state.listOfCards}
                   </tbody>
                 </table>
-                
+
               </div>
               <Card style={{ maxHeight: "25%", overflow: 'auto' }}>
-                <p style={{paddingLeft: "18px" }}><b>Stats:</b></p>
+                <p style={{ paddingLeft: "18px" }}><b>Stats:</b></p>
                 <div>Total cost from TCGPlayer: <i style={{ color: 'green' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
                 <div>Total cost from Card Kingdom: <i style={{ color: 'green' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
                 <div>Most expensive card from TCGPlayer: </div>
@@ -104,7 +107,21 @@ export default class App extends React.Component {
                   </XAxis>
                   <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
                   <Tooltip />
-                  <Bar dataKey="number" fill='#8884d8'></Bar>
+                  {/* <Bar dataKey="number" fill='#110e5e'></Bar> */}
+                  {/* <Bar dataKey="Land" stackId="a" fill="#15143b" />
+                  <Bar dataKey="Instant" stackId="a" fill="#1e1c52" />
+                  <Bar dataKey="Sorcery" stackId="a" fill="#312e87" />
+                  <Bar dataKey="Creature" stackId="a" fill="#3d39a8" />
+                  <Bar dataKey="Artifact" stackId="a" fill="#4944c7" />
+                  <Bar dataKey="Enchantment" stackId="a" fill="#554fe3" />
+                  <Bar dataKey="Planeswalker" stackId="a" fill="#5f59ff" /> */}
+                  <Bar dataKey="Land" stackId="a" fill="#4f49bf" />
+                  <Bar dataKey="Instant" stackId="a" fill="#4978bf" />
+                  <Bar dataKey="Sorcery" stackId="a" fill="#49a9bf" />
+                  <Bar dataKey="Creature" stackId="a" fill="#49bfab" />
+                  <Bar dataKey="Artifact" stackId="a" fill="#49bf80" />
+                  <Bar dataKey="Enchantment" stackId="a" fill="#49bf51" />
+                  <Bar dataKey="Planeswalker" stackId="a" fill="#6ebf49" />
                 </BarChart>
               </ResponsiveContainer>
               <form>
@@ -145,14 +162,14 @@ export default class App extends React.Component {
                   <YAxis></YAxis>
                   <Tooltip />
                   <Bar dataKey="number">
-                  {
-                    (this.state.colorIncludeColorless) ? 
-                    this.state.colorDataWithColorless.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />)) 
-                    : 
-                    this.state.colorData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
-                  }
+                    {
+                      (this.state.colorIncludeColorless) ?
+                        this.state.colorDataWithColorless.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                        :
+                        this.state.colorData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                    }
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -176,14 +193,14 @@ export default class App extends React.Component {
                   <YAxis></YAxis>
                   <Tooltip />
                   <Bar dataKey="number">
-                  {
-                    (this.state.pipsIncludeColorless) ? 
-                    this.state.pipsDataWithColorless.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />)) 
-                    : 
-                    this.state.pipsData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
-                  }
+                    {
+                      (this.state.pipsIncludeColorless) ?
+                        this.state.pipsDataWithColorless.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                        :
+                        this.state.pipsData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                    }
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -201,15 +218,15 @@ export default class App extends React.Component {
   }
 
   cmcIncludeLandsCheck() {
-    this.setState({cmcIncludeLands: !this.state.cmcIncludeLands})
+    this.setState({ cmcIncludeLands: !this.state.cmcIncludeLands })
   }
 
   colorIncludeColorlessCheck() {
-    this.setState({colorIncludeColorless: !this.state.colorIncludeColorless})
+    this.setState({ colorIncludeColorless: !this.state.colorIncludeColorless })
   }
 
   pipsIncludeColorlessCheck() {
-    this.setState({pipsIncludeColorless: !this.state.pipsIncludeColorless})
+    this.setState({ pipsIncludeColorless: !this.state.pipsIncludeColorless })
   }
 
   /**
@@ -323,23 +340,40 @@ export default class App extends React.Component {
           tmpCKPRice,
           jsonCards[i].card.edition.editioncode,
           jsonCards[i].card.edition.editionname
-          );
+        );
 
 
         // Add the CMC of this card to the raw values for the deck
-        let key = "" + tmp.cmc
-        if (key in cmcRawData) {
-          cmcRawData[key] = cmcRawData[key] + (1 * jsonCards[i].quantity)
+        // let key = "" + tmp.cmc
+        // if (key in cmcRawData) {
+        //   cmcRawData[key] = cmcRawData[key] + (1 * jsonCards[i].quantity)
+        // } else {
+        //   cmcRawData[key] = (1 * jsonCards[i].quantity)
+        // }
+
+        let cmcKey = "" + tmp.cmc
+        if (cmcKey in cmcRawData) {
+          if (tmp.types[0] in cmcRawData[cmcKey]) {
+            cmcRawData[cmcKey][tmp.types[0]] = cmcRawData[cmcKey][tmp.types[0]] + (1 * jsonCards[i].quantity)
+          } else {
+            cmcRawData[cmcKey][tmp.types[0]] = (1 * jsonCards[i].quantity)
+          }
         } else {
-          cmcRawData[key] = (1 * jsonCards[i].quantity)
+          cmcRawData[cmcKey] = {}
+          cmcRawData[cmcKey][tmp.types[0]] = (1 * jsonCards[i].quantity)
         }
 
         // Add this card to the raw types for NONLANDS if this card is not a land
         if (!tmp.types.includes("Land")) {
-          if (key in cmcRawDataNoLands) {
-            cmcRawDataNoLands[key] = cmcRawDataNoLands[key] + 1
+          if (cmcKey in cmcRawDataNoLands) {
+            if (tmp.types[0] in cmcRawDataNoLands[cmcKey]) {
+              cmcRawDataNoLands[cmcKey][tmp.types[0]] = cmcRawDataNoLands[cmcKey][tmp.types[0]] + (1 * jsonCards[i].quantity)
+            } else {
+              cmcRawDataNoLands[cmcKey][tmp.types[0]] = (1 * jsonCards[i].quantity)
+            }
           } else {
-            cmcRawDataNoLands[key] = 1
+            cmcRawDataNoLands[cmcKey] = {}
+            cmcRawDataNoLands[cmcKey][tmp.types[0]] = (1 * jsonCards[i].quantity)
           }
         }
 
@@ -426,15 +460,22 @@ export default class App extends React.Component {
       }
 
       // Put the CMC data in the form the charts need (objects)
+
+      console.log(cmcRawData)
+
       let cmcData = []
       for (var key in cmcRawData) {
-        cmcData.push({ cmc: key, number: cmcRawData[key] })
+        let pushMe = cmcRawData[key]
+        pushMe["cmc"] = key
+        cmcData.push(pushMe)
       }
 
       // Put the CMC data in the form the charts need (objects)
       let cmcDataNoLands = []
       for (var keyNoLands in cmcRawDataNoLands) {
-        cmcDataNoLands.push({ cmc: keyNoLands, number: cmcRawDataNoLands[keyNoLands] })
+        let pushMe = cmcRawDataNoLands[keyNoLands]
+        pushMe["cmc"] = keyNoLands
+        cmcDataNoLands.push(pushMe)
       }
 
       // Put the type data in the form that the charts need
@@ -454,12 +495,12 @@ export default class App extends React.Component {
       // let colorDataWithColorless = []
       let colorDataWithColorless = JSON.parse(JSON.stringify(colorData))
       if (numColorless > 0) {
-        colorDataWithColorless.push({color: "Colorless", number: numColorless})
+        colorDataWithColorless.push({ color: "Colorless", number: numColorless })
       }
 
       // Put the pip data in the form for the charts
       // 38e051
-      let colorMap = {Colorless: "#d7d8db", White: "#eaebd1", Blue: "#4287f5", Black: "#242526", Red: "#de2f2f", Green: "#38e051", }
+      let colorMap = { Colorless: "#d7d8db", White: "#eaebd1", Blue: "#4287f5", Black: "#242526", Red: "#de2f2f", Green: "#009c3c", }
       let pipsData = []
       for (var key3 in pipsRawData) {
         pipsData.push({ color: key3, number: pipsRawData[key3] })
@@ -468,7 +509,7 @@ export default class App extends React.Component {
       // Create the dataset that includes colorless cards
       let pipsDataWithColorless = JSON.parse(JSON.stringify(pipsData))
       if (numColorlessPips > 0)
-        pipsDataWithColorless.push({color: 'Colorless', number: numColorlessPips})
+        pipsDataWithColorless.push({ color: 'Colorless', number: numColorlessPips })
 
       // Map the JS cards to react elements, and store those elements in a list. This list
       // will be
@@ -478,11 +519,11 @@ export default class App extends React.Component {
         )
       })
 
-      console.log(colorData)
-      console.log(colorDataWithColorless)
-      
+      // console.log(colorData)
+      // console.log(colorDataWithColorless)
 
-      console.log(colorMap["Colorless"])
+
+      // console.log(colorMap["Colorless"])
 
       // Store all of the analysis data in the state for the other components to use
       this.setState({
