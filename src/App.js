@@ -277,7 +277,7 @@ export default class App extends React.Component {
     });
 
     // {headers: {"Access-Control-Allow-Origin": "*"}}
-    axiosInstance.get('decks/' + number + "/", {headers: {'Cookie': 'ID=12345'}}).then((response) => {
+    axiosInstance.get('decks/' + number + "/", {headers: {'crossorigin': 'true'}}).then((response) => {
 
 
     // archidekt.fetchDeckById(number).then((response) => {
