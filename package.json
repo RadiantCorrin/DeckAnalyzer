@@ -14,7 +14,8 @@
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "reactstrap": "^8.5.1",
-    "recharts": "^1.8.5"
+    "recharts": "^1.8.5",
+    "serve": "^11.3.2"
   },
   "scripts": {
     "precommit": "lint-staged",

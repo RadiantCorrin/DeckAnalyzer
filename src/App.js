@@ -273,11 +273,11 @@ export default class App extends React.Component {
     // Gotta wait for it to be done to do anything
 
     let axiosInstance = axios.create({
-      baseURL: 'https://archidekt.com/api/'
+      baseURL: 'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
     });
 
     // {headers: {"Access-Control-Allow-Origin": "*"}}
-    axiosInstance.get('decks/' + number + "/", {headers: {'crossorigin': 'true'}}).then((response) => {
+    axiosInstance.get('decks/' + number + "/", {headers: {'mode': 'no-cors', 'crossdomain': 'true', 'withCredentials': 'false'}}).then((response) => {
 
 
     // archidekt.fetchDeckById(number).then((response) => {
