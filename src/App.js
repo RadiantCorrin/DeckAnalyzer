@@ -24,7 +24,8 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <div style={{ height: '100vh', width: "100vw" }}>
+      // style={{ height: '100vh', width: "100vw" }}
+      <div style={{ height: '100%', width: '100%' }}>
         {/* The header for the website when nothing is loaded */}
         {!this.state.loaded && <Header />}
 
@@ -73,144 +74,156 @@ export default class App extends React.Component {
               <Header />
             </div>
             <div className="sidebar" style={{ minWidth: "375px" }}>
-              <Card style={{ maxHeight: '10%' }}>
+              <Card style={{ height: '70%' }}>
                 <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
+                  <div style={{ display: 'block', height: '100%', overflow: 'auto', border: "1px solid LightGray" }}>
+                    <table>
+                      <tbody>
+                        {this.state.listOfCards}
+                      </tbody>
+                    </table>
+                  </div>               
               </Card>
-              <div style={{ display: 'block', maxHeight: "65%", overflow: 'auto', border: "1px solid LightGray" }}>
-                <table>
-                  <tbody>
-                    {this.state.listOfCards}
-                  </tbody>
-                </table>
-
-              </div>
-              <Card style={{ maxHeight: "25%", overflow: 'auto' }}>
-                <p style={{ paddingLeft: "18px" }}><b>Stats:</b></p>
+              <Card style={{ height: "30%", overflow: "auto"}}>
+                <CardHeader><b>Stats</b></CardHeader>
+                <CardBody>
                 <div>Total cost from TCGPlayer: <i style={{ color: 'green' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
                 <div>Total cost from Card Kingdom: <i style={{ color: 'green' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
                 <div>Most expensive card from TCGPlayer: </div>
                 <div><i style={{ color: 'green' }}>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
                 <div>Most expensive card from Card Kingdom:</div>
                 <div><i style={{ color: 'green' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
+                </CardBody>
               </Card>
             </div>
-            <div className="boxone" style={{}}>
-              <Card>
+            <div className="boxone">
+              <Card style={{ height: "100%", width: "100%" }}>
                 <CardHeader >
                   <b>CMC Breakdown</b>
                 </CardHeader>
+                <CardBody>
+                  <ResponsiveContainer height="90%" width="100%">
+                    <BarChart data={(this.state.cmcIncludeLands) ? this.state.cmcData : this.state.cmcDataNoLands}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="cmc">
+                        <Label value="CMC" position="insideBottom" offset={-5}></Label>
+                      </XAxis>
+                      <YAxis>
+                        <Label value='Number of Cards' angle='-90' position='insideLeft' style={{ textAnchor: 'middle' }} />
+                      </YAxis>
+                      <Tooltip />
+                      <Bar dataKey="Land" stackId="a" fill="#8e8e93" />
+                      <Bar dataKey="Instant" stackId="a" fill="#ffcc00" />
+                      <Bar dataKey="Sorcery" stackId="a" fill="#ff9500" />
+                      <Bar dataKey="Creature" stackId="a" fill="#ff3b30" />
+                      <Bar dataKey="Artifact" stackId="a" fill="#4cd964" />
+                      <Bar dataKey="Enchantment" stackId="a" fill="#34aadc" />
+                      <Bar dataKey="Planeswalker" stackId="a" fill="#5856d6" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <form style={{ height: "10%" }}>
+                    <label>
+                      <input type="checkbox" onChange={this.cmcIncludeLandsCheck} ></input>
+                      {' '}Include Lands
+                    </label>
+                  </form>
+                </CardBody>
               </Card>
-              <ResponsiveContainer height="75%" width="95%">
-                <BarChart data={(this.state.cmcIncludeLands) ? this.state.cmcData : this.state.cmcDataNoLands}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="cmc">
-                    <Label value="CMC" position="insideBottom" offset={-5}></Label>
-                  </XAxis>
-                  <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
-                  <Tooltip />
-                  {/* <Bar dataKey="number" fill='#110e5e'></Bar> */}
-                  {/* <Bar dataKey="Land" stackId="a" fill="#15143b" />
-                  <Bar dataKey="Instant" stackId="a" fill="#1e1c52" />
-                  <Bar dataKey="Sorcery" stackId="a" fill="#312e87" />
-                  <Bar dataKey="Creature" stackId="a" fill="#3d39a8" />
-                  <Bar dataKey="Artifact" stackId="a" fill="#4944c7" />
-                  <Bar dataKey="Enchantment" stackId="a" fill="#554fe3" />
-                  <Bar dataKey="Planeswalker" stackId="a" fill="#5f59ff" /> */}
-                  <Bar dataKey="Land" stackId="a" fill="#4f49bf" />
-                  <Bar dataKey="Instant" stackId="a" fill="#4978bf" />
-                  <Bar dataKey="Sorcery" stackId="a" fill="#49a9bf" />
-                  <Bar dataKey="Creature" stackId="a" fill="#49bfab" />
-                  <Bar dataKey="Artifact" stackId="a" fill="#49bf80" />
-                  <Bar dataKey="Enchantment" stackId="a" fill="#49bf51" />
-                  <Bar dataKey="Planeswalker" stackId="a" fill="#6ebf49" />
-                </BarChart>
-              </ResponsiveContainer>
-              <form>
-                <label>
-                  <input type="checkbox" onChange={this.cmcIncludeLandsCheck} ></input>
-                  {' '}Include Lands
-                  </label>
-              </form>
             </div>
             <div className="boxtwo">
-              <Card>
+              <Card style={{ height: "100%", width: "100%" }}>
                 <CardHeader>
                   <b>Type Distribution</b>
                 </CardHeader>
+                <CardBody>
+                  <ResponsiveContainer height="90%" width="100%">
+                    <BarChart data={this.state.typeData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="type">
+                        <Label value="Card Type" position="insideBottom" offset={-5}></Label>
+                      </XAxis>
+                      <YAxis>
+                        <Label value='Number of Cards' angle='-90' position='insideLeft' style={{ textAnchor: 'middle' }} />
+                      </YAxis>
+                      <Tooltip />
+                      <Bar dataKey="number" >
+                        {this.state.typeData.map((entry, index) => (<Cell key={`cell-${index}`} fill={this.state.typeColorMap[entry.type]} />)) }
+                        </Bar>              
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardBody>
               </Card>
-              <ResponsiveContainer height="75%" width="95%">
-                <BarChart data={this.state.typeData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="type">
-                    <Label value="Card Type" position="insideBottom" offset={-5}></Label>
-                  </XAxis>
-                  <YAxis label={{ value: 'Number of Cards', angle: -90, position: 'insideLeft' }}></YAxis>
-                  <Tooltip />
-                  <Bar dataKey="number" fill='#1ab886'></Bar>
-                </BarChart>
-              </ResponsiveContainer>
             </div>
             <div className="boxthree">
-              <Card>
+              <Card style={{ height: "100%", width: "100%" }}>
                 <CardHeader>
                   <b>Color Breakdown</b>
                 </CardHeader>
-              </Card>
-              <ResponsiveContainer height="75%" width="95%">
-                <BarChart data={(this.state.colorIncludeColorless) ? this.state.colorDataWithColorless : this.state.colorData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="color"></XAxis>
-                  <YAxis></YAxis>
-                  <Tooltip />
-                  <Bar dataKey="number">
-                    {
-                      (this.state.colorIncludeColorless) ?
-                        this.state.colorDataWithColorless.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
-                        :
-                        this.state.colorData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
-                    }
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-              <form>
-                <label>
-                  <input type="checkbox" onChange={this.colorIncludeColorlessCheck} ></input>
-                  {' '}Include Colorless
+                <CardBody>
+                  <ResponsiveContainer height="90%" width="100%">
+                    <BarChart data={(this.state.colorIncludeColorless) ? this.state.colorDataWithColorless : this.state.colorData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="color"></XAxis>
+                      <YAxis>
+                        <Label value='Number of Cards by Color' angle='-90' position='insideLeft' style={{ textAnchor: 'middle' }} />
+                      </YAxis>
+                      <Tooltip />
+                      <Bar dataKey="number">
+                        {
+                          (this.state.colorIncludeColorless) ?
+                            this.state.colorDataWithColorless.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                            :
+                            this.state.colorData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                        }
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <form style={{ height: "10%" }}>
+                    <label>
+                      <input type="checkbox" onChange={this.colorIncludeColorlessCheck} ></input>
+                      {' '}Include Colorless Nonland Cards
                   </label>
-              </form>
+                  </form>
+                </CardBody>
+              </Card>
+
             </div>
             <div className="boxfour">
-              <Card>
+              <Card style={{ height: "100%", width: "100%" }}>
                 <CardHeader>
                   <b>Number of Colored Pips</b>
                 </CardHeader>
-              </Card>
-              <ResponsiveContainer height="75%" width="95%">
-                <BarChart data={(this.state.pipsIncludeColorless) ? this.state.pipsDataWithColorless : this.state.pipsData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="color"></XAxis>
-                  <YAxis></YAxis>
-                  <Tooltip />
-                  <Bar dataKey="number">
-                    {
-                      (this.state.pipsIncludeColorless) ?
-                        this.state.pipsDataWithColorless.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
-                        :
-                        this.state.pipsData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
-                    }
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-              <form>
-                <label>
-                  <input type="checkbox" onChange={this.pipsIncludeColorlessCheck} ></input>
-                  {' '}Include Colorless Pips
+                <CardBody>
+                  <ResponsiveContainer height="90%" width="100%">
+                    <BarChart data={(this.state.pipsIncludeColorless) ? this.state.pipsDataWithColorless : this.state.pipsData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="color"></XAxis>
+                      <YAxis>
+                        <Label value='Number of Each Colored Pip' angle='-90' position='insideLeft' style={{ textAnchor: 'middle' }} />
+                      </YAxis>
+                      <Tooltip />
+                      <Bar dataKey="number">
+                        {
+                          (this.state.pipsIncludeColorless) ?
+                            this.state.pipsDataWithColorless.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                            :
+                            this.state.pipsData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                        }
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <form style={{ height: "10%" }}>
+                    <label>
+                      <input type="checkbox" onChange={this.pipsIncludeColorlessCheck} ></input>
+                      {' '}Include {String.fromCharCode(9830)} Pips
                   </label>
-              </form>
+                  </form>
+                </CardBody>
+              </Card>
             </div>
           </div>
         }
@@ -273,14 +286,18 @@ export default class App extends React.Component {
     // Gotta wait for it to be done to do anything
 
     let axiosInstance = axios.create({
-      baseURL: 'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
+      baseURL: 'https://thingproxy.freeboard.io/fetch/https://archidekt.com/api/'
     });
 
+    //'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
+    //https://cors-proxy.htmldriven.com/?url=
+
     // {headers: {"Access-Control-Allow-Origin": "*"}}
-    axiosInstance.get('decks/' + number + "/", {headers: {'mode': 'no-cors', 'crossdomain': 'true', 'withCredentials': 'false'}}).then((response) => {
+    // {headers: {'mode': 'no-cors', 'crossdomain': 'true', 'withCredentials': 'false'}}
+    axiosInstance.get('decks/' + number + "/").then((response) => {
 
 
-    // archidekt.fetchDeckById(number).then((response) => {
+      // archidekt.fetchDeckById(number).then((response) => {
       jsonDeck = response
 
       // If there is some error fetching the deck, set the state and exit
@@ -490,15 +507,49 @@ export default class App extends React.Component {
 
       // Put the type data in the form that the charts need
       let typeData = []
-      for (var key1 in typeRawData) {
-        typeData.push({ type: key1, number: typeRawData[key1] })
+      let typeColorMap = { Land: "#8e8e93", Instant: "#ffcc00", Creature: "#ff3b30", Artifact: "#4cd964", Enchantment: "#34aadc", Planeswalker: "#5856d6", Sorcery: "#ff9500"}
+      // Creature, Instant, Sorcery, Artifact, Enchantment, Planeswalker, Land
+      
+      // for (var key1 in typeRawData) {
+      //   // Skip tribal, which keeps getting in here somehow
+      //   if (key1 === "Tribal")
+      //     continue;
+      //   typeData.push({ type: key1, number: typeRawData[key1] })
+      // }
+      // typeData.sort((a, b) => a.type.localeCompare(b.type));
+
+      if ("Creature" in typeRawData) {
+        typeData.push({ type: "Creature", number: typeRawData["Creature"] })
       }
+      if ("Instant" in typeRawData) {
+        typeData.push({ type: "Instant", number: typeRawData["Instant"] })
+      }
+      if ("Sorcery" in typeRawData) {
+        typeData.push({ type: "Sorcery", number: typeRawData["Sorcery"] })
+      }
+      if ("Artifact" in typeRawData) {
+        typeData.push({ type: "Artifact", number: typeRawData["Artifact"] })
+      }
+      if ("Enchantment" in typeRawData) {
+        typeData.push({ type: "Enchantment", number: typeRawData["Enchantment"] })
+      }
+      if ("Land" in typeRawData) {
+        typeData.push({ type: "Land", number: typeRawData["Land"] })
+      }
+      if ("Planeswalker" in typeRawData) {
+        typeData.push({ type: "Planeswalker", number: typeRawData["Planeswalker"] })
+      }
+      
+      // Do this in a more rigid, but determinative way so they are in a
+      // consistent order in the graph
 
       // Put the color data in the form for the charts
       let colorData = []
       for (var key2 in colorRawData) {
         colorData.push({ color: key2, number: colorRawData[key2] })
       }
+
+      
 
       // Create a color data set that also includes the colorless nonland cards
 
@@ -510,7 +561,8 @@ export default class App extends React.Component {
 
       // Put the pip data in the form for the charts
       // 38e051
-      let colorMap = { Colorless: "#d7d8db", White: "#eaebd1", Blue: "#4287f5", Black: "#242526", Red: "#de2f2f", Green: "#009c3c", }
+      // let colorMap = { Colorless: "#d7d8db", White: "#eaebd1", Blue: "#4287f5", Black: "#242526", Red: "#de2f2f", Green: "#009c3c", }
+      let colorMap = { Colorless: "#8e8e93", White: "#ffcc00", Blue: "#5ac8fa", Black: "#242526", Red: "#ff3b30", Green: "#4cd964", }
       let pipsData = []
       for (var key3 in pipsRawData) {
         pipsData.push({ color: key3, number: pipsRawData[key3] })
@@ -529,18 +581,13 @@ export default class App extends React.Component {
         )
       })
 
-      // console.log(colorData)
-      // console.log(colorDataWithColorless)
-
-
-      // console.log(colorMap["Colorless"])
-
       // Store all of the analysis data in the state for the other components to use
       this.setState({
         deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false,
         cmcData: cmcData, cmcDataNoLands: cmcDataNoLands, typeData: typeData, colorData: colorData, pipsData: pipsData,
         TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK,
-        colors: colorMap, colorDataWithColorless: colorDataWithColorless, pipsDataWithColorless: pipsDataWithColorless
+        colors: colorMap, colorDataWithColorless: colorDataWithColorless, pipsDataWithColorless: pipsDataWithColorless,
+        typeColorMap: typeColorMap
       })
     });
   }

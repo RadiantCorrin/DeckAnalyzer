@@ -1,13 +1,15 @@
 .customContainer {
     display: grid;
     grid-template-columns: 1fr 2fr 2fr;
-    grid-template-rows: 1fr 2fr 2fr;
+    grid-template-rows: 1fr 3fr 3fr;
     grid-template-areas:
     "header header header"
     "sidebar boxone boxtwo"
     "sidebar boxthree boxfour";
     height: 100%;
-    
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
 }
 .header {
     grid-area: header; 
@@ -19,6 +21,9 @@
     padding-right: 5px; 
     padding-bottom: 10px; 
     padding-left: 10px;
+
+    min-width: 0;
+    min-height: 0;
   }
   .boxone {
     grid-area: boxone;
@@ -26,6 +31,9 @@
     padding-right: 5px; 
     padding-bottom: 5px; 
     padding-left: 5px;
+
+    min-width: 0;
+    min-height: 0;
   }
   .boxtwo {
     grid-area: boxtwo;
@@ -33,6 +41,9 @@
     padding-right: 10px; 
     padding-bottom: 5px; 
     padding-left: 5px;
+
+    min-width: 0;
+    min-height: 0;
   }
   .boxthree {
     grid-area: boxthree;
@@ -40,6 +51,9 @@
     padding-right: 5px; 
     padding-bottom: 10px; 
     padding-left: 5px;
+
+    min-width: 0;
+    min-height: 0;
   }
   .boxfour {
     grid-area: boxfour;
@@ -47,4 +61,7 @@
     padding-right: 10px; 
     padding-bottom: 10px; 
     padding-left: 5px;
+
+    min-width: 0;
+    min-height: 0;
   }
