@@ -27,7 +27,7 @@ export default class App extends React.Component {
       // style={{ height: '100vh', width: "100vw" }}
       <div style={{ height: '100%', width: '100%' }}>
         {/* The header for the website when nothing is loaded */}
-        {!this.state.loaded && <Header />}
+        {!this.state.loaded && <Header mode="Welcome" />}
 
         {/* The welcome page of the analyzer. */}
         {!this.state.loaded &&
@@ -71,7 +71,7 @@ export default class App extends React.Component {
         {this.state.loaded &&
           <div className="customContainer">
             <div className="header">
-              <Header />
+              <Header mode="Loaded" deckName={this.state.deckName} deckURL={this.state.deckURL}/>
             </div>
             <div className="sidebar" style={{ minWidth: "375px" }}>
               <Card style={{ height: '70%' }}>
@@ -292,13 +292,12 @@ export default class App extends React.Component {
     //'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
     //https://cors-proxy.htmldriven.com/?url=
 
-    // {headers: {"Access-Control-Allow-Origin": "*"}}
-    // {headers: {'mode': 'no-cors', 'crossdomain': 'true', 'withCredentials': 'false'}}
     axiosInstance.get('decks/' + number + "/").then((response) => {
-
-
       // archidekt.fetchDeckById(number).then((response) => {
       jsonDeck = response
+      console.log(response)
+
+      let deckName = response.data.name
 
       // If there is some error fetching the deck, set the state and exit
       if (jsonDeck == null) {
@@ -309,7 +308,6 @@ export default class App extends React.Component {
 
       // Extract the actual json object that holds all the cards
       let jsonCards = jsonDeck.data.cards
-      console.log(jsonCards)
 
       // Set up variables to be used to track information about the cards that were loaded
       let jsCards = []
@@ -369,15 +367,7 @@ export default class App extends React.Component {
           jsonCards[i].card.edition.editionname
         );
 
-
-        // Add the CMC of this card to the raw values for the deck
-        // let key = "" + tmp.cmc
-        // if (key in cmcRawData) {
-        //   cmcRawData[key] = cmcRawData[key] + (1 * jsonCards[i].quantity)
-        // } else {
-        //   cmcRawData[key] = (1 * jsonCards[i].quantity)
-        // }
-
+        // Add the cmc of this card to the raw CMC list
         let cmcKey = "" + tmp.cmc
         if (cmcKey in cmcRawData) {
           if (tmp.types[0] in cmcRawData[cmcKey]) {
@@ -587,7 +577,7 @@ export default class App extends React.Component {
         cmcData: cmcData, cmcDataNoLands: cmcDataNoLands, typeData: typeData, colorData: colorData, pipsData: pipsData,
         TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK,
         colors: colorMap, colorDataWithColorless: colorDataWithColorless, pipsDataWithColorless: pipsDataWithColorless,
-        typeColorMap: typeColorMap
+        typeColorMap: typeColorMap, deckName: deckName
       })
     });
   }
