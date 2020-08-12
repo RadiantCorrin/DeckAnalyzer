@@ -286,9 +286,10 @@ export default class App extends React.Component {
     // Gotta wait for it to be done to do anything
 
     let axiosInstance = axios.create({
-      baseURL: 'https://thingproxy.freeboard.io/fetch/https://archidekt.com/api/'
+      baseURL: 'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
     });
 
+    //'https://thingproxy.freeboard.io/fetch/https://archidekt.com/api/'
     //'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
     //https://cors-proxy.htmldriven.com/?url=
 
