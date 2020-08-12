@@ -35,13 +35,16 @@ export default class App extends React.Component {
             <Card>
               <CardBody>
                 <p>
-                  Just put the URL to your deck below, and the Analyzer will display information about it!
+                  Just put the URL to your deck below, and the Analyzer will display information about it.
                 </p>
                 <p>
                   Currently, the Analyzer has only been tested with Commander decks. If your deck is not a Commander deck, the Analyzer may not work as intended!
                 </p>
                 <p>
                   You can use this link as an example, if you want: <a href="https://archidekt.com/decks/468872">https://archidekt.com/decks/468872</a>
+                </p>
+                <p>
+                  WARNING: The free proxy this website uses to solve a CORS issue has been a little unstable recently. If the analyzer is hanging after you press load, try refreshing or waiting a minute. The proxy may have crashed, but is fixed quickly.
                 </p>
                 <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
