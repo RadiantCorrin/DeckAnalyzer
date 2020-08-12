@@ -6,6 +6,7 @@ import './container.css'
 import archidekt from 'archidekt'
 import ListEntry from './ListEntry';
 import Header from './Header'
+import axios from 'axios'
 import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label, ResponsiveContainer, Cell } from 'recharts';
 
 export default class App extends React.Component {
@@ -270,7 +271,16 @@ export default class App extends React.Component {
 
     // Read in the deck with a lookup, which is an Axios promise
     // Gotta wait for it to be done to do anything
-    archidekt.fetchDeckById(number).then((response) => {
+
+    let axiosInstance = axios.create({
+      baseURL: 'https://archidekt.com/api/'
+    });
+
+    // {headers: {"Access-Control-Allow-Origin": "*"}}
+    axiosInstance.get('decks/' + number + "/").then((response) => {
+
+
+    // archidekt.fetchDeckById(number).then((response) => {
       jsonDeck = response
 
       // If there is some error fetching the deck, set the state and exit
