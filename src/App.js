@@ -50,9 +50,7 @@ export default class App extends React.Component {
                 <p>
                   You can use this link as an example, if you want: <a href="https://archidekt.com/decks/468872">https://archidekt.com/decks/468872</a>
                 </p>
-                <p style={{color: this.colorMap["Red"]}}>
-                  WARNING: The free proxy this website uses to solve a CORS issue has been a little unstable recently. If the analyzer is hanging after you press load, try refreshing or waiting a minute. The proxy may have crashed, but is usually gets fixed quickly.
-                </p>
+                
                 <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
                     <Label for="deckURL">Deck URL</Label>
@@ -64,6 +62,10 @@ export default class App extends React.Component {
                     </Input>
                   </FormGroup>
                 </Form>
+
+                <p>
+                  WARNING: The free proxy this website uses to solve a CORS issue has been a little unstable recently. If the analyzer is hanging after you press load, try refreshing or waiting a minute. The proxy will be fixed quickly.
+                </p>
 
                 {!this.state.loadingDeck && <Button onClick={this.loadDeck}>Load</Button>}
 

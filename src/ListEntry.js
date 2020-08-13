@@ -28,6 +28,8 @@ export default class ListEntry extends React.Component {
         //     this.directCKUrl += "-foil"
         // }
 
+        // Use https://www.seekpng.com/ima/u2w7w7w7w7a9e6e6/ for foil card overlay?
+
         this.state = { tooltipOpen: false }
     }
 
