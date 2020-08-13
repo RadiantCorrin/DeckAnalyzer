@@ -1,6 +1,6 @@
 .customContainer {
     display: grid;
-    grid-template-columns: 1fr 2fr 2fr;
+    grid-template-columns: 1.25fr 2fr 2fr;
     grid-template-rows: 1fr 3fr 3fr;
     grid-template-areas:
     "header header header"
@@ -65,3 +65,14 @@
     min-width: 0;
     min-height: 0;
   }
+
+  .table {
+    font-size: 28px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #283c34;
+    text-align: center;
+}

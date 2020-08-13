@@ -3,23 +3,30 @@ import React from 'react';
 import { Card, CardBody, Button, Form, FormGroup, Input, Container, CardHeader, Spinner } from 'reactstrap';
 import './App.css';
 import './container.css'
-import archidekt from 'archidekt'
 import ListEntry from './ListEntry';
 import Header from './Header'
 import axios from 'axios'
+
 import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label, ResponsiveContainer, Cell } from 'recharts';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false, cmcIncludeLands: false, colorIncludeColorless: false, pipsIncludeColorless: false };
+    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false, cmcIncludeLands: false, colorIncludeColorless: false, pipsIncludeColorless: false, sortStatus: "not sorted" };
     this.loadDeck = this.loadDeck.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this)
 
     this.cmcIncludeLandsCheck = this.cmcIncludeLandsCheck.bind(this)
     this.colorIncludeColorlessCheck = this.colorIncludeColorlessCheck.bind(this)
     this.pipsIncludeColorlessCheck = this.pipsIncludeColorlessCheck.bind(this)
+
+    this.sortByName = this.sortByName.bind(this)
+    this.sortBySet = this.sortBySet.bind(this)
+    this.sortByTCGPrice = this.sortByTCGPrice.bind(this)
+    this.sortByCKPrice = this.sortByCKPrice.bind(this)
+
+    this.colorMap = { Colorless: "#8e8e93", White: "#ffcc00", Blue: "#5ac8fa", Black: "#242526", Red: "#ff3b30", Green: "#4cd964", }
   }
 
   render() {
@@ -43,8 +50,8 @@ export default class App extends React.Component {
                 <p>
                   You can use this link as an example, if you want: <a href="https://archidekt.com/decks/468872">https://archidekt.com/decks/468872</a>
                 </p>
-                <p>
-                  WARNING: The free proxy this website uses to solve a CORS issue has been a little unstable recently. If the analyzer is hanging after you press load, try refreshing or waiting a minute. The proxy may have crashed, but is fixed quickly.
+                <p style={{color: this.colorMap["Red"]}}>
+                  WARNING: The free proxy this website uses to solve a CORS issue has been a little unstable recently. If the analyzer is hanging after you press load, try refreshing or waiting a minute. The proxy may have crashed, but is usually gets fixed quickly.
                 </p>
                 <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
@@ -74,28 +81,36 @@ export default class App extends React.Component {
         {this.state.loaded &&
           <div className="customContainer">
             <div className="header">
-              <Header mode="Loaded" deckName={this.state.deckName} deckURL={this.state.deckURL}/>
+              <Header mode="Loaded" deckName={this.state.deckName} deckURL={this.state.deckURL} />
             </div>
-            <div className="sidebar" style={{ minWidth: "375px" }}>
+            <div className="sidebar" style={{ minWidth: "440px" }}>
               <Card style={{ height: '70%' }}>
-                <CardHeader><b>Deck List and Price (TCG, CK)</b></CardHeader>
-                  <div style={{ display: 'block', height: '100%', overflow: 'auto', border: "1px solid LightGray" }}>
-                    <table>
-                      <tbody>
-                        {this.state.listOfCards}
-                      </tbody>
-                    </table>
-                  </div>               
+                <CardHeader style={{paddingLeft: "11px"}}><b>Deck List</b></CardHeader>
+                <div style={{ display: 'block', height: '100%', width:"100%", overflow:'auto', border: "1px solid LightGray" }}>
+                  <table style={{ height: "100%", width:"100%", borderCollapse: 'collapse'}}>
+                    <thead style={{position: 'sticky', top: '0'}}>
+                      <tr style={{position: 'sticky', top: '0'}}>
+                        <th style={{position: 'sticky', top: '0', paddingLeft: "10px", backgroundColor: "#ffffff"}} scope="col" onClick={this.sortByName}>Card Name</th>
+                        <th style={{position: 'sticky', top: '0', paddingLeft: "10px", backgroundColor: "#ffffff"}} scope="col" onClick={this.sortBySet}>Set</th>
+                        <th style={{position: 'sticky', top: '0', paddingLeft: "10px", backgroundColor: "#ffffff"}} scope="col" onClick={this.sortByTCGPrice}>TCG Price</th>
+                        <th style={{position: 'sticky', top: '0', paddingLeft: "10px", backgroundColor: "#ffffff"}} scope="col" onClick={this.sortByCKPrice}>CK Price</th>
+                      </tr>
+                    </thead>
+                    <tbody style={{height: '100%', width:"100%"}}>
+                      {this.state.listOfCards}
+                    </tbody>
+                  </table>
+                </div>
               </Card>
-              <Card style={{ height: "30%", overflow: "auto"}}>
-                <CardHeader><b>Stats</b></CardHeader>
-                <CardBody>
-                <div>Total cost from TCGPlayer: <i style={{ color: 'green' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
-                <div>Total cost from Card Kingdom: <i style={{ color: 'green' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
-                <div>Most expensive card from TCGPlayer: </div>
-                <div><i style={{ color: 'green' }}>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
-                <div>Most expensive card from Card Kingdom:</div>
-                <div><i style={{ color: 'green' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
+              <Card style={{ height: "30%"}}>
+                <CardHeader style={{paddingLeft: "11px"}}><b>Stats</b></CardHeader>
+                <CardBody style={{paddingLeft: "11px", display: "block", overflow: "auto"}}>
+                  <div>Total cost from TCGPlayer: <i style={{ color: 'green' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
+                  <div>Total cost from Card Kingdom: <i style={{ color: 'green' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
+                  <div>Most expensive card from TCGPlayer: </div>
+                  <div><i style={{ color: 'green' }}>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
+                  <div>Most expensive card from Card Kingdom:</div>
+                  <div><i style={{ color: 'green' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
                 </CardBody>
               </Card>
             </div>
@@ -112,7 +127,7 @@ export default class App extends React.Component {
                         <Label value="CMC" position="insideBottom" offset={-5}></Label>
                       </XAxis>
                       <YAxis>
-                        <Label value='Number of Cards' angle='-90' position='insideLeft' style={{ textAnchor: 'middle' }} />
+                        <Label value='Number of Cards' angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }} />
                       </YAxis>
                       <Tooltip />
                       <Bar dataKey="Land" stackId="a" fill="#8e8e93" />
@@ -146,12 +161,12 @@ export default class App extends React.Component {
                         <Label value="Card Type" position="insideBottom" offset={-5}></Label>
                       </XAxis>
                       <YAxis>
-                        <Label value='Number of Cards' angle='-90' position='insideLeft' style={{ textAnchor: 'middle' }} />
+                        <Label value='Number of Cards' angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }} />
                       </YAxis>
                       <Tooltip />
                       <Bar dataKey="number" >
-                        {this.state.typeData.map((entry, index) => (<Cell key={`cell-${index}`} fill={this.state.typeColorMap[entry.type]} />)) }
-                        </Bar>              
+                        {this.state.typeData.map((entry, index) => (<Cell key={`cell-${index}`} fill={this.state.typeColorMap[entry.type]} />))}
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 </CardBody>
@@ -168,7 +183,7 @@ export default class App extends React.Component {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="color"></XAxis>
                       <YAxis>
-                        <Label value='Number of Cards by Color' angle='-90' position='insideLeft' style={{ textAnchor: 'middle' }} />
+                        <Label value='Number of Cards by Color' angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }} />
                       </YAxis>
                       <Tooltip />
                       <Bar dataKey="number">
@@ -204,7 +219,7 @@ export default class App extends React.Component {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="color"></XAxis>
                       <YAxis>
-                        <Label value='Number of Each Colored Pip' angle='-90' position='insideLeft' style={{ textAnchor: 'middle' }} />
+                        <Label value='Number of Each Colored Pip' angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }} />
                       </YAxis>
                       <Tooltip />
                       <Bar dataKey="number">
@@ -232,6 +247,102 @@ export default class App extends React.Component {
         }
       </div>
     );
+  }
+
+  sortByName() {
+    if (this.state.sortStatus === "by name alphabetical") {
+      let sorted = [...this.state.deck]
+      sorted.sort((a, b) => b.name.localeCompare(a.name))
+      let tmpDeck = sorted.map(card => {
+        return (
+          <ListEntry key={card.name} card={card} />
+        )
+      })
+
+      this.setState({ sortStatus: "by name inverse alphabetical", listOfCards: tmpDeck})
+    } else {
+      let sorted = [...this.state.deck]
+      sorted.sort((a, b) => a.name.localeCompare(b.name))
+      let tmpDeck = sorted.map(card => {
+        return (
+          <ListEntry key={card.name} card={card} />
+        )
+      })
+
+      this.setState({ sortStatus: "by name alphabetical", listOfCards: tmpDeck})
+    }
+  }
+
+  sortBySet() {
+    if (this.state.sortStatus === "by set alphabetical") {
+      let sorted = [...this.state.deck]
+      sorted.sort((a, b) => b.setCode.localeCompare(a.setCode))
+      let tmpDeck = sorted.map(card => {
+        return (
+          <ListEntry key={card.name} card={card} />
+        )
+      })
+
+      this.setState({ sortStatus: "by set inverse alphabetical", listOfCards: tmpDeck})
+    } else {
+      let sorted = [...this.state.deck]
+      sorted.sort((a, b) => a.setCode.localeCompare(b.setCode))
+      let tmpDeck = sorted.map(card => {
+        return (
+          <ListEntry key={card.name} card={card} />
+        )
+      })
+
+      this.setState({ sortStatus: "by set alphabetical", listOfCards: tmpDeck})
+    }
+  }
+
+  sortByTCGPrice() {
+    if (this.state.sortStatus === "by TCG price") {
+      let sorted = [...this.state.deck]
+      sorted.sort((a, b) => a.tcgprice - b.tcgprice)
+      let tmpDeck = sorted.map(card => {
+        return (
+          <ListEntry key={card.name} card={card} />
+        )
+      })
+
+      this.setState({ sortStatus: "by inverse TCG price", listOfCards: tmpDeck})
+    } else {
+      let sorted = [...this.state.deck]
+      sorted.sort((a, b) => b.tcgprice - a.tcgprice)
+      let tmpDeck = sorted.map(card => {
+        return (
+          <ListEntry key={card.name} card={card} />
+        )
+      })
+
+      this.setState({ sortStatus: "by TCG price", listOfCards: tmpDeck})
+    }
+  }
+
+  sortByCKPrice() {
+    if (this.state.sortStatus === "by CK price") {
+      let sorted = [...this.state.deck]
+      sorted.sort((a, b) => a.ckprice - b.ckprice)
+      let tmpDeck = sorted.map(card => {
+        return (
+          <ListEntry key={card.name} card={card} />
+        )
+      })
+
+      this.setState({ sortStatus: "by CK inverse price", listOfCards: tmpDeck})
+    } else {
+      let sorted = [...this.state.deck]
+      sorted.sort((a, b) => b.ckprice - a.ckprice)
+      let tmpDeck = sorted.map(card => {
+        return (
+          <ListEntry key={card.name} card={card} />
+        )
+      })
+
+      this.setState({ sortStatus: "by CK price", listOfCards: tmpDeck})
+    }
   }
 
   cmcIncludeLandsCheck() {
@@ -285,19 +396,17 @@ export default class App extends React.Component {
     // Update state so we can start loading the deck
     this.setState({ loadingDeck: true })
 
-    // Read in the deck with a lookup, which is an Axios promise
-    // Gotta wait for it to be done to do anything
-
+    // Create an axios instance to send our get request to Archidekt.
     let axiosInstance = axios.create({
       baseURL: 'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
     });
 
+    // Other proxies that can be used:
     //'https://thingproxy.freeboard.io/fetch/https://archidekt.com/api/'
     //'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
-    //https://cors-proxy.htmldriven.com/?url=
 
+    // Send the get request, and do the result on response (when the promise is fullfilled)
     axiosInstance.get('decks/' + number + "/").then((response) => {
-      // archidekt.fetchDeckById(number).then((response) => {
       jsonDeck = response
       console.log(response)
 
@@ -368,7 +477,8 @@ export default class App extends React.Component {
           tmpTCGPrice,
           tmpCKPRice,
           jsonCards[i].card.edition.editioncode,
-          jsonCards[i].card.edition.editionname
+          jsonCards[i].card.edition.editionname,
+          jsonCards[i].card.multiverseid
         );
 
         // Add the cmc of this card to the raw CMC list
@@ -501,17 +611,12 @@ export default class App extends React.Component {
 
       // Put the type data in the form that the charts need
       let typeData = []
-      let typeColorMap = { Land: "#8e8e93", Instant: "#ffcc00", Creature: "#ff3b30", Artifact: "#4cd964", Enchantment: "#34aadc", Planeswalker: "#5856d6", Sorcery: "#ff9500"}
+      let typeColorMap = { Land: "#8e8e93", Instant: "#ffcc00", Creature: "#ff3b30", Artifact: "#4cd964", Enchantment: "#34aadc", Planeswalker: "#5856d6", Sorcery: "#ff9500" }
       // Creature, Instant, Sorcery, Artifact, Enchantment, Planeswalker, Land
-      
-      // for (var key1 in typeRawData) {
-      //   // Skip tribal, which keeps getting in here somehow
-      //   if (key1 === "Tribal")
-      //     continue;
-      //   typeData.push({ type: key1, number: typeRawData[key1] })
-      // }
-      // typeData.sort((a, b) => a.type.localeCompare(b.type));
 
+      // Put each of the types in IN THIS ORDER.
+      // This is the best way to do it, since otherwise I would have to write
+      // a custom comparator that enforced this exact order, which isn't very clean.
       if ("Creature" in typeRawData) {
         typeData.push({ type: "Creature", number: typeRawData["Creature"] })
       }
@@ -533,29 +638,22 @@ export default class App extends React.Component {
       if ("Planeswalker" in typeRawData) {
         typeData.push({ type: "Planeswalker", number: typeRawData["Planeswalker"] })
       }
-      
-      // Do this in a more rigid, but determinative way so they are in a
-      // consistent order in the graph
 
+      // TODO: Do this in a more rigid, but determinative way so they are in a
+      // consistent order in the graph?
       // Put the color data in the form for the charts
       let colorData = []
       for (var key2 in colorRawData) {
         colorData.push({ color: key2, number: colorRawData[key2] })
       }
 
-      
-
       // Create a color data set that also includes the colorless nonland cards
-
-      // let colorDataWithColorless = []
       let colorDataWithColorless = JSON.parse(JSON.stringify(colorData))
       if (numColorless > 0) {
         colorDataWithColorless.push({ color: "Colorless", number: numColorless })
       }
 
       // Put the pip data in the form for the charts
-      // 38e051
-      // let colorMap = { Colorless: "#d7d8db", White: "#eaebd1", Blue: "#4287f5", Black: "#242526", Red: "#de2f2f", Green: "#009c3c", }
       let colorMap = { Colorless: "#8e8e93", White: "#ffcc00", Blue: "#5ac8fa", Black: "#242526", Red: "#ff3b30", Green: "#4cd964", }
       let pipsData = []
       for (var key3 in pipsRawData) {
@@ -568,10 +666,10 @@ export default class App extends React.Component {
         pipsDataWithColorless.push({ color: 'Colorless', number: numColorlessPips })
 
       // Map the JS cards to react elements, and store those elements in a list. This list
-      // will be
+      // will be the table rows for the decklist above
       let list = jsCards.map(card => {
         return (
-          <ListEntry card={card} />
+          <ListEntry key={card.name} card={card} />
         )
       })
 
@@ -592,7 +690,7 @@ export default class App extends React.Component {
  * beautiful, JavaScript object form :)
  */
 class MTGCard {
-  constructor(name, colors, manaCost, cmc, types, modifier, tcgprice, ckprice, setCode, setName) {
+  constructor(name, colors, manaCost, cmc, types, modifier, tcgprice, ckprice, setCode, setName, multiverseID) {
     this.name = name          // The name of the card
     this.colors = colors      // The colors that the card is
     this.manaCost = manaCost  // The mana cost of this card
@@ -603,6 +701,7 @@ class MTGCard {
     this.ckprice = ckprice    // The price at Card Kingdom for this card and condition
     this.setCode = setCode;   // The set code for the expansion this card is from
     this.setName = setName;   // The name of the set that this card is from
+    this.multiverseID = multiverseID;
   }
 
   /**
