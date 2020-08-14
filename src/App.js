@@ -88,14 +88,14 @@ export default class App extends React.Component {
             <div className="sidebar" style={{ minWidth: "440px" }}>
               <Card style={{ height: '70%' }}>
                 <CardHeader style={{paddingLeft: "11px"}}><b>Deck List</b></CardHeader>
-                <div style={{ display: 'block', height: '100%', width:"100%", overflow:'auto', border: "1px solid LightGray" }}>
-                  <table style={{ height: "100%", width:"100%", borderCollapse: 'collapse'}}>
-                    <thead style={{position: 'sticky', top: '0'}}>
-                      <tr style={{position: 'sticky', top: '0'}}>
-                        <th style={{position: 'sticky', top: '0', paddingLeft: "10px", backgroundColor: "#ffffff"}} scope="col" onClick={this.sortByName}>Card Name</th>
-                        <th style={{position: 'sticky', top: '0', paddingLeft: "10px", backgroundColor: "#ffffff"}} scope="col" onClick={this.sortBySet}>Set</th>
-                        <th style={{position: 'sticky', top: '0', paddingLeft: "10px", backgroundColor: "#ffffff"}} scope="col" onClick={this.sortByTCGPrice}>TCG Price</th>
-                        <th style={{position: 'sticky', top: '0', paddingLeft: "10px", backgroundColor: "#ffffff"}} scope="col" onClick={this.sortByCKPrice}>CK Price</th>
+                <div style={{ display: 'block', height: '100%', width:"100%", overflow:'auto', border: "1px solid LightGray",}}>
+                  <table style={{ height: "100%", width:"100%"}}>
+                    <thead style={{position: 'sticky', top: '0' }}>
+                      <tr style={{position: 'sticky', top: '0' }}>
+                        <th scope="col" onClick={this.sortByName}>Card Name</th>
+                        <th scope="col" onClick={this.sortBySet}>Set</th>
+                        <th scope="col" onClick={this.sortByTCGPrice}>TCG Price</th>
+                        <th scope="col" onClick={this.sortByCKPrice}>CK Price</th>
                       </tr>
                     </thead>
                     <tbody style={{height: '100%', width:"100%"}}>

@@ -14,7 +14,6 @@
 .header {
     grid-area: header; 
 }
-
 .sidebar {
     grid-area: sidebar;
     /* padding-top: 10px; */
@@ -75,4 +74,20 @@
     justify-content: center;
     background-color: #283c34;
     text-align: center;
+
+}
+
+th {
+  position: sticky; 
+  top: 0;
+  padding-left: 10px;
+  background-color: #ffffff;
+  /* border-radius: 10px;
+  border: 1px solid lightgray; */
+  box-shadow: inset 0 2px 0 lightgray, inset 0 -2px 0 lightgrey, inset -2px 0 0 lightgrey, inset 2px 0 0 lightgrey;
+
+}
+
+td {
+  box-shadow: inset 0 1px 0 lightgray, inset 0 -1px 0 lightgrey, inset -1px 0 0 lightgrey, inset 1px 0 0 lightgrey;
 }

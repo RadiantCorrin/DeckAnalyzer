@@ -45,17 +45,20 @@ export default class ListEntry extends React.Component {
                             {/* <Tooltip placement="right" isOpen={this.state.tooltipOpen} target={"deck" + this.card.multiverseID} toggle={toggle} style={{maxWidth:"300px", maxHeight: "400px", pointerEvents: 'none'}}>
                                 {(this.card.multiverseID > 0) ? <img src={"http://gatherer.wizards.com/Handlers/Image.ashx?type=card&multiverseid=" + this.card.multiverseID} alt={this.card.name} style={{width: "223px", height:"310px"}}/> : "No picture for this printing"}
                             </Tooltip> */}
-                            {(this.card.multiverseID > 0) ? 
-                            <OverlayTrigger 
-                                placement="right"
-                                delay={{ show: 250, hide: 100 }}
-                                overlay={
-                                    <Tooltip id={"deck" + this.card.multiverseID} className="tooltip">
-                                        <img src={"http://gatherer.wizards.com/Handlers/Image.ashx?type=card&multiverseid=" + this.card.multiverseID} alt={this.card.name} style={{ width: "223px", height: "310px", color: 'inherit' }} /> 
-                                    </Tooltip>}
-                            >
-                                <a className="gradient" id={"deck" + this.card.multiverseID} href={"http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + this.card.multiverseID} target="_blank">{this.card.name}</a>
-                            </OverlayTrigger> : this.card.name}
+                            {(this.card.multiverseID > 0) ?
+                                <OverlayTrigger
+                                    placement="right"
+                                    delay={{ show: 250, hide: 100 }}
+                                    overlay={
+                                        <Tooltip id={"deck" + this.card.multiverseID} className="tooltip">
+                                            <div style={{ position: 'relative' }}>
+                                                <img src={"http://gatherer.wizards.com/Handlers/Image.ashx?type=card&multiverseid=" + this.card.multiverseID} alt={this.card.name} style={{ width: "223px", height: "310px" }} />
+                                                <img src={"https://www.vippng.com/png/full/467-4672380_rainbow-overlay-png-for-free-download-mtg-card.png"} alt={'badload'} style={{ width: "223px", height: "310px", position: 'absolute', top: '0', left: '0', opacity: '1.0' }} />
+                                            </div>
+                                        </Tooltip>}
+                                >
+                                    <a className="gradient" id={"deck" + this.card.multiverseID} href={"http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + this.card.multiverseID} target="_blank">{this.card.name}</a>
+                                </OverlayTrigger> : this.card.name}
                         </div>
                         :
                         <div className="cell">
@@ -63,17 +66,20 @@ export default class ListEntry extends React.Component {
                             {/* <Tooltip placement="right" isOpen={this.state.tooltipOpen} target={"deck" + this.card.multiverseID} toggle={toggle} style={{maxWidth:"300px", maxHeight: "400px", pointerEvents: 'none'}}>
                                 {(this.card.multiverseID > 0) ? <img src={"http://gatherer.wizards.com/Handlers/Image.ashx?type=card&multiverseid=" + this.card.multiverseID} alt={this.card.name} style={{width: "223px", height:"310px"}}/> : "No picture for this printing"}
                             </Tooltip> */}
-                            {(this.card.multiverseID > 0) ? 
-                            <OverlayTrigger 
-                                placement="right"
-                                delay={{ show: 250, hide: 0 }}
-                                overlay={
-                                    <Tooltip id={"deck" + this.card.multiverseID} className="tooltip">
-                                        <img src={"http://gatherer.wizards.com/Handlers/Image.ashx?type=card&multiverseid=" + this.card.multiverseID} alt={this.card.name} style={{ width: "223px", height: "310px", opacity: '1' }} /> 
-                                    </Tooltip>}
-                            >
-                                <a id={"deck" + this.card.multiverseID} href={"http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + this.card.multiverseID} target="_blank">{this.card.name}</a>
-                            </OverlayTrigger> : this.card.name}
+                            {(this.card.multiverseID > 0) ?
+                                <OverlayTrigger
+                                    placement="right"
+                                    delay={{ show: 250, hide: 0 }}
+                                    overlay={
+                                        <Tooltip id={"deck" + this.card.multiverseID} className="tooltip">
+                                                <img src={"http://gatherer.wizards.com/Handlers/Image.ashx?type=card&multiverseid=" + this.card.multiverseID} alt={this.card.name} style={{ width: "223px", height: "310px" }} />
+                                            {/* <img style={{ position: "absolute", top: '0'}} src={"http://gatherer.wizards.com/Handlers/Image.ashx?type=card&multiverseid=" + this.card.multiverseID} alt={this.card.name} style={{ width: "223px", height: "310px", opacity: '1' }} />  */}
+                                        </Tooltip>}
+                                >
+
+                                    <a id={"deck" + this.card.multiverseID} href={"http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + this.card.multiverseID} target="_blank">{this.card.name}</a>
+
+                                </OverlayTrigger> : this.card.name}
                         </div>
                     }
                     <div style={{ textAlign: "left", paddingLeft: "10px" }}>
@@ -88,14 +94,14 @@ export default class ListEntry extends React.Component {
                 <td>
                     <div style={{ textAlign: "left", paddingLeft: "10px" }}>
                         <a href={this.tcgURL} target="_blank">
-                            {(this.card.tcgprice > 0) ? '$' + this.card.tcgprice : "No Price"}
+                            {(this.card.tcgprice > 0) ? '$' + this.card.tcgprice : "$---"}
                         </a>
                     </div>
                 </td>
                 <td>
                     <div style={{ textAlign: "left", paddingLeft: "10px" }}>
                         <a href={this.ckURL} target="_blank">
-                            {(this.card.ckprice > 0) ? '$' + this.card.ckprice : "No Price"}
+                            {(this.card.ckprice > 0) ? '$' + this.card.ckprice : "$---"}
                         </a>
                     </div>
                 </td>
