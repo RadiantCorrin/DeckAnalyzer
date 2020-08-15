@@ -10,6 +10,7 @@ import axios from 'axios'
 
 import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label, ResponsiveContainer, Cell } from 'recharts';
 import TypeTooltip from './TypeTooltip';
+import ColorTooltip from './ColorTooltip';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -27,7 +28,8 @@ export default class App extends React.Component {
       sortStatus: "not sorted",
       loadProgressNumber: 0,
       loadProgressStatus: "Reading Provided URL",
-      typeShowCardLists: false
+      typeShowCardLists: false,
+      colorShowCardLists: false,
     };
 
     this.loadDeck = this.loadDeck.bind(this);
@@ -50,13 +52,13 @@ export default class App extends React.Component {
   render() {
     return (
       // style={{ height: '100vh', width: "100vw" }}
-      <div style={{ height: '100%', width: '100%', position: 'relative', zIndex: 0 }}>
+      <div style={{ height: '100%', width: '100%', position: 'relative', zIndex: 0, pointerEvents: 'none' }}>
         {/* The header for the website when nothing is loaded */}
         {!this.state.loaded && <Header mode="Welcome" />}
 
         {/* The welcome page of the analyzer. */}
         {!this.state.loaded &&
-          <Container fluid>
+          <Container style={{pointerEvents: 'auto'}} fluid>
             <Card>
               <CardBody>
                 <p>
@@ -103,7 +105,7 @@ export default class App extends React.Component {
 
         {/* The information display for after the deck has been loaded / analyzed */}
         {this.state.loaded &&
-          <div className="customContainer">
+          <div className="customContainer" style={{ pointerEvents: 'none'}}>
             <div className="header">
               <Header mode="Loaded" deckName={this.state.deckName} deckURL={this.state.deckURL} />
             </div>
@@ -257,15 +259,15 @@ export default class App extends React.Component {
                       <YAxis>
                         <Label value='Number of Cards by Color' angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }} />
                       </YAxis>
-                      <Tooltip />
+                      <Tooltip content={<ColorTooltip showCardLists={this.state.colorShowCardLists} cardLists={this.state.colorCardLists}></ColorTooltip>}/>
                       <Bar dataKey="number">
                         {
                           (this.state.colorIncludeColorless) ?
                             this.state.colorDataWithColorless.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                              <Cell key={`cell-${index}`} onClick={() => this.colorBarClick(entry.type)} fill={this.state.colors[entry.color]} />))
                             :
                             this.state.colorData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={this.state.colors[entry.color]} />))
+                              <Cell key={`cell-${index}`} onClick={() => this.colorBarClick(entry.type)} fill={this.state.colors[entry.color]} />))
                         }
                       </Bar>
                     </BarChart>
@@ -280,13 +282,13 @@ export default class App extends React.Component {
               </Card>
 
             </div>
-            <div className="boxfour">
-              <Card style={{ height: "100%", width: "100%", postition: 'relative', zIndex: -1 }}>
+            <div className="boxfour" style={{pointerEvents: 'none'}}>
+              <Card style={{ height: "100%", width: "100%", position: 'relative', zIndex: -1,  pointerEvents: 'auto'}}>
                 <CardHeader>
                   <b>Number of Colored Pips</b>
                 </CardHeader>
                 <CardBody>
-                  <ResponsiveContainer height="90%" width="100%">
+                  <ResponsiveContainer height="90%" width="100%" >
                     <BarChart data={(this.state.pipsIncludeColorless) ? this.state.pipsDataWithColorless : this.state.pipsData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="color"></XAxis>
@@ -308,11 +310,11 @@ export default class App extends React.Component {
                   </ResponsiveContainer>
                   <form style={{ height: "10%" }}>
                     <label>
-                      <input type="checkbox" onChange={this.pipsIncludeColorlessCheck} ></input>
+                      <input type="checkbox" style={{ position: 'relative', zIndex: '1000'}}onChange={this.pipsIncludeColorlessCheck} ></input>
                       {' '}Include {String.fromCharCode(9830)} Pips
                   </label>
                   </form>
-                </CardBody>
+                  </CardBody>
               </Card>
             </div>
           </div>
@@ -326,6 +328,10 @@ export default class App extends React.Component {
    */
   typeBarClick() {
     this.setState({typeShowCardLists: !this.state.typeShowCardLists})
+  }
+
+  colorBarClick() {
+    this.setState({colorShowCardLists: !this.state.colorShowCardLists})
   }
 
   sortByName() {
@@ -522,6 +528,7 @@ export default class App extends React.Component {
       let maxTCG = null
       let maxCK = null
 
+      let colorCardLists = {}
 
       this.setState({ loadProgressNumber: 60, loadProgressStatus: "Reading Cards" })
 
@@ -614,19 +621,30 @@ export default class App extends React.Component {
           let color = tmp.colors[j]
           if (color in colorRawData) {
             colorRawData[color] = colorRawData[color] + 1
+            colorCardLists[color].push(tmp.name)
           } else {
             colorRawData[color] = 1
+            colorCardLists[color] = []
+            colorCardLists[color].push(tmp.name)
           }
         }
         // Make sure to count this card as colorless if it is! (lands don't count :) )
         if (tmp.colors.length === 0 && !tmp.types.includes("Land")) {
           numColorless++
+          if ("Colorless" in colorCardLists) {
+            colorCardLists["Colorless"].push(tmp.name)
+          } else {
+            colorCardLists["Colorless"] = []
+            colorCardLists["Colorless"].push(tmp.name)
+          }
         }
 
+        
         // TODO: Needs support for colorless mana symbols
         // Parse the pip color symbols for this card and add them to the trackers
         for (let j = 0; j < tmp.manaCost.length; j++) {
           let ch = tmp.manaCost.charAt(j)
+          console.log(colorCardLists)
 
           // Match the manacost character to the name of the color it belongs to
           // and increment the count in the corresponding data entry
@@ -635,36 +653,46 @@ export default class App extends React.Component {
             case "W":
               if ("White" in pipsRawData) {
                 pipsRawData["White"]++
+
               } else {
                 pipsRawData["White"] = 1
+
               }
               break;
             case "U":
               if ("Blue" in pipsRawData) {
                 pipsRawData["Blue"]++
+
               } else {
                 pipsRawData["Blue"] = 1
+
               }
               break;
             case "B":
               if ("Black" in pipsRawData) {
                 pipsRawData["Black"]++
+
               } else {
                 pipsRawData["Black"] = 1
+
               }
               break;
             case "R":
               if ("Red" in pipsRawData) {
                 pipsRawData["Red"]++
+
               } else {
                 pipsRawData["Red"] = 1
+
               }
               break;
             case "G":
               if ("Green" in pipsRawData) {
                 pipsRawData["Green"]++
+
               } else {
                 pipsRawData["Green"] = 1
+
               }
               break;
             case "C":
@@ -859,7 +887,7 @@ export default class App extends React.Component {
         cmcData: cmcData, cmcDataNoLands: cmcDataNoLands, typeData: typeData, colorData: colorData, pipsData: pipsData,
         TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK,
         colors: colorMap, colorDataWithColorless: colorDataWithColorless, pipsDataWithColorless: pipsDataWithColorless,
-        typeColorMap: typeColorMap, deckName: deckName, typeCardLists: typeCardLists
+        typeColorMap: typeColorMap, deckName: deckName, typeCardLists: typeCardLists, colorCardLists: colorCardLists
       })
     });
   }

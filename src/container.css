@@ -10,7 +10,13 @@
     width: 100%;
     min-width: 0;
     min-height: 0;
+
 }
+
+.header, .sidebar, .boxone, .boxtwo, .boxthree {
+  pointer-events: auto;
+}
+
 .header {
     grid-area: header; 
 }
