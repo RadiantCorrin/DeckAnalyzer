@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Card, CardBody, Button, Form, FormGroup, Input, Container, CardHeader, Spinner } from 'reactstrap';
+import { Card, CardBody, Button, Form, FormGroup, Input, Container, CardHeader } from 'reactstrap';
+import { ProgressBar } from 'react-bootstrap'
 import './App.css';
 import './container.css'
 import ListEntry from './ListEntry';
@@ -8,12 +9,27 @@ import Header from './Header'
 import axios from 'axios'
 
 import { BarChart, XAxis, YAxis, Bar, Tooltip, CartesianGrid, Label, ResponsiveContainer, Cell } from 'recharts';
+import TypeTooltip from './TypeTooltip';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { loaded: false, deckURL: null, loadError: false, loadingDeck: false, cmcIncludeLands: false, colorIncludeColorless: false, pipsIncludeColorless: false, sortStatus: "not sorted" };
+    this.state =
+    {
+      loaded: false,
+      deckURL: null,
+      loadError: false,
+      loadingDeck: false,
+      cmcIncludeLands: false,
+      colorIncludeColorless: false,
+      pipsIncludeColorless: false,
+      sortStatus: "not sorted",
+      loadProgressNumber: 0,
+      loadProgressStatus: "Reading Provided URL",
+      typeShowCardLists: false
+    };
+
     this.loadDeck = this.loadDeck.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this)
 
@@ -26,13 +42,15 @@ export default class App extends React.Component {
     this.sortByTCGPrice = this.sortByTCGPrice.bind(this)
     this.sortByCKPrice = this.sortByCKPrice.bind(this)
 
+    this.barClick = this.typeBarClick.bind(this)
+
     this.colorMap = { Colorless: "#8e8e93", White: "#ffcc00", Blue: "#5ac8fa", Black: "#242526", Red: "#ff3b30", Green: "#4cd964", }
   }
 
   render() {
     return (
       // style={{ height: '100vh', width: "100vw" }}
-      <div style={{ height: '100%', width: '100%' }}>
+      <div style={{ height: '100%', width: '100%', position: 'relative', zIndex: 0 }}>
         {/* The header for the website when nothing is loaded */}
         {!this.state.loaded && <Header mode="Welcome" />}
 
@@ -50,7 +68,7 @@ export default class App extends React.Component {
                 <p>
                   You can use this link as an example, if you want: <a href="https://archidekt.com/decks/468872">https://archidekt.com/decks/468872</a>
                 </p>
-                
+
                 <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
                     <Label for="deckURL">Deck URL</Label>
@@ -74,7 +92,11 @@ export default class App extends React.Component {
                     <CardHeader color="text-warning">Error loading decklist!</CardHeader>
                   </Card>}
 
-                {this.state.loadingDeck && <Spinner color="primary" />}
+                {this.state.loadingDeck &&
+                  <div>
+                    <ProgressBar animated now={100} label={this.state.loadProgressStatus}>
+                    </ProgressBar>
+                  </div>}
               </CardBody>
             </Card>
           </Container>}
@@ -87,32 +109,66 @@ export default class App extends React.Component {
             </div>
             <div className="sidebar" style={{ minWidth: "440px" }}>
               <Card style={{ height: '70%' }}>
-                <CardHeader style={{paddingLeft: "11px"}}><b>Deck List</b></CardHeader>
-                <div style={{ display: 'block', height: '100%', width:"100%", overflow:'auto', border: "1px solid LightGray",}}>
-                  <table style={{ height: "100%", width:"100%"}}>
-                    <thead style={{position: 'sticky', top: '0' }}>
-                      <tr style={{position: 'sticky', top: '0' }}>
+                <CardHeader style={{ paddingLeft: "11px" }}><b>Deck List</b></CardHeader>
+                <div style={{ display: 'block', height: '100%', width: "100%", overflow: 'auto', border: "1px solid LightGray", }}>
+                  <table style={{ height: "100%", width: "100%" }}>
+                    <thead style={{ position: 'sticky', top: '0' }}>
+                      <tr style={{ position: 'sticky', top: '0' }}>
                         <th scope="col" onClick={this.sortByName}>Card Name</th>
                         <th scope="col" onClick={this.sortBySet}>Set</th>
                         <th scope="col" onClick={this.sortByTCGPrice}>TCG Price</th>
                         <th scope="col" onClick={this.sortByCKPrice}>CK Price</th>
                       </tr>
                     </thead>
-                    <tbody style={{height: '100%', width:"100%"}}>
+                    <tbody style={{ height: '100%', width: "100%" }}>
                       {this.state.listOfCards}
                     </tbody>
                   </table>
                 </div>
               </Card>
-              <Card style={{ height: "30%"}}>
-                <CardHeader style={{paddingLeft: "11px"}}><b>Stats</b></CardHeader>
-                <CardBody style={{paddingLeft: "11px", display: "block", overflow: "auto"}}>
-                  <div>Total cost from TCGPlayer: <i style={{ color: 'green' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
+              <Card style={{ height: "30%" }}>
+                <CardHeader style={{ paddingLeft: "11px" }}><b>Stats</b></CardHeader>
+                <CardBody style={{ paddingLeft: "11px", display: "block", overflow: "auto" }}>
+                  {/* <div>Total cost from TCGPlayer: <i style={{ color: 'green' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
                   <div>Total cost from Card Kingdom: <i style={{ color: 'green' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
                   <div>Most expensive card from TCGPlayer: </div>
                   <div><i style={{ color: 'green' }}>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
                   <div>Most expensive card from Card Kingdom:</div>
-                  <div><i style={{ color: 'green' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div>
+                  <div><i style={{ color: 'green' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div> */}
+                  <table>
+                    <tr>
+                      <td style={{ textAlign: "right"}}>
+                        Total cost from TCGPlayer: 
+                      </td>
+                      <td style={{textAlign: "left", color: "#5856d6"}}>
+                        &nbsp;{"$" + this.state.TCGCost.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: "right"}}>
+                      Most expensive from TCGPlayer:
+                      </td>
+                      <td style={{textAlign: "left", color: "#5856d6"}}>
+                        &nbsp;{this.state.TCGMax.name + " ($" + this.state.TCGMax.cost.toFixed(2) + ")"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: "right"}}>
+                        Total cost from Card Kingdom: 
+                      </td>
+                      <td style={{textAlign: "left", color: "#5856d6"}}>
+                        &nbsp;{"$" + this.state.CKCost.toFixed(2)}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: "right"}}>
+                      Most expensive from CK:
+                      </td>
+                      <td style={{textAlign: "left", color: "#5856d6"}}>
+                        &nbsp;{this.state.CKMax.name + " ($" + this.state.CKMax.cost.toFixed(2) + ")"}
+                      </td>
+                    </tr>
+                  </table>
                 </CardBody>
               </Card>
             </div>
@@ -141,12 +197,26 @@ export default class App extends React.Component {
                       <Bar dataKey="Planeswalker" stackId="a" fill="#5856d6" />
                     </BarChart>
                   </ResponsiveContainer>
-                  <form style={{ height: "10%" }}>
-                    <label>
-                      <input type="checkbox" onChange={this.cmcIncludeLandsCheck} ></input>
-                      {' '}Include Lands
-                    </label>
-                  </form>
+                  <table style={{ height: "10%", width: "100%" }}>
+                    <tr style={{ paddingTop: "8px" }}>
+                      <td style={{ textAlign: 'left' }}>
+
+                        <div>
+                          <input type="checkbox" onChange={this.cmcIncludeLandsCheck} ></input>
+                          {' '}Include Lands
+                          </div>
+
+                      </td>
+
+                      <td style={{ textAlign: 'right' }}>
+                        Mean: {(this.state.cmcIncludeLands) ? this.state.cmcMean.toFixed(2) : this.state.cmcMeanNoLands.toFixed(2)}
+                        &nbsp;&nbsp; Median: {(this.state.cmcIncludeLands) ? this.state.cmcMedian.toFixed(2) : this.state.cmcMedianNoLands.toFixed(2)}
+                        &nbsp;&nbsp; Mode: {(this.state.cmcIncludeLands) ? this.state.cmcMode.toFixed(2) : this.state.cmcModeNoLands.toFixed(2)}
+                      </td>
+
+                    </tr>
+                  </table>
+
                 </CardBody>
               </Card>
             </div>
@@ -165,9 +235,9 @@ export default class App extends React.Component {
                       <YAxis>
                         <Label value='Number of Cards' angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }} />
                       </YAxis>
-                      <Tooltip />
+                      <Tooltip content={<TypeTooltip showCardLists={this.state.typeShowCardLists} cardLists={this.state.typeCardLists}></TypeTooltip>}/>
                       <Bar dataKey="number" >
-                        {this.state.typeData.map((entry, index) => (<Cell key={`cell-${index}`} fill={this.state.typeColorMap[entry.type]} />))}
+                        {this.state.typeData.map((entry, index) => (<Cell onClick={() => this.typeBarClick(entry.type)} key={`cell-${index}`} fill={this.state.typeColorMap[entry.type]} />))}
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
@@ -211,7 +281,7 @@ export default class App extends React.Component {
 
             </div>
             <div className="boxfour">
-              <Card style={{ height: "100%", width: "100%" }}>
+              <Card style={{ height: "100%", width: "100%", postition: 'relative', zIndex: -1 }}>
                 <CardHeader>
                   <b>Number of Colored Pips</b>
                 </CardHeader>
@@ -251,6 +321,13 @@ export default class App extends React.Component {
     );
   }
 
+  /**
+   * Toggles the card lists on the type bargraph tooltip
+   */
+  typeBarClick() {
+    this.setState({typeShowCardLists: !this.state.typeShowCardLists})
+  }
+
   sortByName() {
     if (this.state.sortStatus === "by name alphabetical") {
       let sorted = [...this.state.deck]
@@ -261,7 +338,7 @@ export default class App extends React.Component {
         )
       })
 
-      this.setState({ sortStatus: "by name inverse alphabetical", listOfCards: tmpDeck})
+      this.setState({ sortStatus: "by name inverse alphabetical", listOfCards: tmpDeck })
     } else {
       let sorted = [...this.state.deck]
       sorted.sort((a, b) => a.name.localeCompare(b.name))
@@ -271,7 +348,7 @@ export default class App extends React.Component {
         )
       })
 
-      this.setState({ sortStatus: "by name alphabetical", listOfCards: tmpDeck})
+      this.setState({ sortStatus: "by name alphabetical", listOfCards: tmpDeck })
     }
   }
 
@@ -285,7 +362,7 @@ export default class App extends React.Component {
         )
       })
 
-      this.setState({ sortStatus: "by set inverse alphabetical", listOfCards: tmpDeck})
+      this.setState({ sortStatus: "by set inverse alphabetical", listOfCards: tmpDeck })
     } else {
       let sorted = [...this.state.deck]
       sorted.sort((a, b) => a.setCode.localeCompare(b.setCode))
@@ -295,7 +372,7 @@ export default class App extends React.Component {
         )
       })
 
-      this.setState({ sortStatus: "by set alphabetical", listOfCards: tmpDeck})
+      this.setState({ sortStatus: "by set alphabetical", listOfCards: tmpDeck })
     }
   }
 
@@ -309,7 +386,7 @@ export default class App extends React.Component {
         )
       })
 
-      this.setState({ sortStatus: "by inverse TCG price", listOfCards: tmpDeck})
+      this.setState({ sortStatus: "by inverse TCG price", listOfCards: tmpDeck })
     } else {
       let sorted = [...this.state.deck]
       sorted.sort((a, b) => b.tcgprice - a.tcgprice)
@@ -319,7 +396,7 @@ export default class App extends React.Component {
         )
       })
 
-      this.setState({ sortStatus: "by TCG price", listOfCards: tmpDeck})
+      this.setState({ sortStatus: "by TCG price", listOfCards: tmpDeck })
     }
   }
 
@@ -333,7 +410,7 @@ export default class App extends React.Component {
         )
       })
 
-      this.setState({ sortStatus: "by CK inverse price", listOfCards: tmpDeck})
+      this.setState({ sortStatus: "by CK inverse price", listOfCards: tmpDeck })
     } else {
       let sorted = [...this.state.deck]
       sorted.sort((a, b) => b.ckprice - a.ckprice)
@@ -343,7 +420,7 @@ export default class App extends React.Component {
         )
       })
 
-      this.setState({ sortStatus: "by CK price", listOfCards: tmpDeck})
+      this.setState({ sortStatus: "by CK price", listOfCards: tmpDeck })
     }
   }
 
@@ -376,6 +453,8 @@ export default class App extends React.Component {
   loadDeck() {
     let jsonDeck = null
 
+    this.setState({ loadProgressNumber: 20, loadProgressStatus: "Reading URL" })
+
     // If no valid url is found, don't try loading!
     if (this.state.deckURL == null || "") {
       console.log("Null/empty URL on call")
@@ -407,6 +486,8 @@ export default class App extends React.Component {
     //'https://thingproxy.freeboard.io/fetch/https://archidekt.com/api/'
     //'https://cors-anywhere.herokuapp.com/https://archidekt.com/api/'
 
+    this.setState({ loadProgressNumber: 40, loadProgressStatus: "Downloading Deck" })
+
     // Send the get request, and do the result on response (when the promise is fullfilled)
     axiosInstance.get('decks/' + number + "/").then((response) => {
       jsonDeck = response
@@ -430,6 +511,7 @@ export default class App extends React.Component {
       let cmcRawData = {}
       let cmcRawDataNoLands = {}
       let typeRawData = {}
+      let typeCardLists = {}
       let colorRawData = {}
       let numColorless = 0
       let pipsRawData = {}
@@ -439,6 +521,9 @@ export default class App extends React.Component {
       let ckTotalCost = 0
       let maxTCG = null
       let maxCK = null
+
+
+      this.setState({ loadProgressNumber: 60, loadProgressStatus: "Reading Cards" })
 
       // For each card, parse all the information we need from it
       for (let i = 0; i < jsonCards.length; i++) {
@@ -515,8 +600,11 @@ export default class App extends React.Component {
           let type = tmp.types[j]
           if (type in typeRawData) {
             typeRawData[type] = typeRawData[type] + (1 * jsonCards[i].quantity)
+            typeCardLists[type].push(tmp.name)
           } else {
             typeRawData[type] = (1 * jsonCards[i].quantity)
+            typeCardLists[type] = []
+            typeCardLists[type].push(tmp.name)
           }
         }
 
@@ -596,6 +684,47 @@ export default class App extends React.Component {
 
       console.log(cmcRawData)
 
+      this.setState({ loadProgressNumber: 80, loadProgressStatus: "Analyzing Cards" })
+
+      // Calculate the mean
+
+      let numbersByCmc = Object.values(cmcRawData)
+
+      let cmcSum = 0;
+      let cmcTotalEntries = 0;
+
+      let cmcModeValue = 0
+      let cmcModeOccurences = 0
+      let cmcMedianArray = []
+      for (let i = 0; i < numbersByCmc.length; i++) {
+        // Work on finding the mean
+        console.log(numbersByCmc[i])
+        let subtypesValues = Object.values(numbersByCmc[i])
+        console.log("cmc " + i + " values array: " + subtypesValues)
+        let totalNumberOfEntries = subtypesValues.reduce((acc, curr) => acc + curr, 0)
+        console.log("total cards at cmc " + i + ": " + totalNumberOfEntries)
+        cmcSum += (i * totalNumberOfEntries);
+        cmcTotalEntries += totalNumberOfEntries
+
+        // Work on finding the mode
+        if (totalNumberOfEntries > cmcModeOccurences) {
+          cmcModeOccurences = totalNumberOfEntries;
+          cmcModeValue = i;
+        }
+
+        // Work on finding the median
+        for (let j = 0; j < totalNumberOfEntries; j++) {
+          cmcMedianArray.push(i)
+        }
+      }
+
+      let cmcMean = cmcSum / cmcTotalEntries;
+      console.log(cmcMean)
+
+      let cmcMedianValue = cmcMedianArray[Math.round(cmcMedianArray.length / 2)]
+
+      this.setState({ cmcMean: cmcMean, cmcMode: cmcModeValue, cmcMedian: cmcMedianValue })
+
       let cmcData = []
       for (var key in cmcRawData) {
         let pushMe = cmcRawData[key]
@@ -604,6 +733,53 @@ export default class App extends React.Component {
       }
 
       // Put the CMC data in the form the charts need (objects)
+
+      let cmcMedianNoLands = 0;
+      let cmcModeNoLands = 0;
+
+      let cmcSumNoLands = 0;
+      let cmcTotalEntriesNoLands = 0;
+
+      let cmcModeValueNoLands = 0
+      let cmcModeOccurencesNoLands = 0
+
+      let cmcMedianArrayNoLands = []
+
+      // Calculate the mean without lands
+      let numbersByCmc2 = Object.values(cmcRawDataNoLands)
+      for (let i = 0; i < numbersByCmc2.length; i++) {
+        console.log(numbersByCmc2[i])
+        let subtypesValues = Object.values(numbersByCmc2[i])
+        console.log("NO LANDS cmc " + i + " values array: " + subtypesValues)
+
+        let totalNumberOfEntries = 0;
+        for (let j = 0; j < subtypesValues.length; j++) {
+          totalNumberOfEntries += subtypesValues[j]
+        }
+
+        console.log("NO LANDS total cards at cmc " + i + ": " + totalNumberOfEntries)
+
+        cmcSumNoLands += (i * totalNumberOfEntries);
+        cmcTotalEntriesNoLands += totalNumberOfEntries
+
+        if (totalNumberOfEntries > cmcModeOccurencesNoLands) {
+          cmcModeOccurencesNoLands = totalNumberOfEntries;
+          cmcModeValueNoLands = i;
+        }
+
+        for (let j = 0; j < totalNumberOfEntries; j++) {
+          cmcMedianArrayNoLands.push(i)
+        }
+
+      }
+
+      cmcModeNoLands = cmcModeValueNoLands
+      let cmcMeanNoLands = cmcSumNoLands / cmcTotalEntriesNoLands;
+      cmcMedianNoLands = cmcMedianArrayNoLands[Math.round(cmcMedianArrayNoLands.length / 2)]
+      console.log(cmcMeanNoLands)
+      this.setState({ cmcMeanNoLands: cmcMeanNoLands, cmcModeNoLands: cmcModeNoLands, cmcMedianNoLands: cmcMedianNoLands })
+
+      // Prepare the no lands cmc data for the barchart
       let cmcDataNoLands = []
       for (var keyNoLands in cmcRawDataNoLands) {
         let pushMe = cmcRawDataNoLands[keyNoLands]
@@ -675,13 +851,15 @@ export default class App extends React.Component {
         )
       })
 
+      console.log(typeCardLists)
+
       // Store all of the analysis data in the state for the other components to use
       this.setState({
         deck: jsCards, listOfCards: list, loaded: true, loadingDeck: false, loadError: false,
         cmcData: cmcData, cmcDataNoLands: cmcDataNoLands, typeData: typeData, colorData: colorData, pipsData: pipsData,
         TCGCost: tcgTotalCost, CKCost: ckTotalCost, TCGMax: maxTCG, CKMax: maxCK,
         colors: colorMap, colorDataWithColorless: colorDataWithColorless, pipsDataWithColorless: pipsDataWithColorless,
-        typeColorMap: typeColorMap, deckName: deckName
+        typeColorMap: typeColorMap, deckName: deckName, typeCardLists: typeCardLists
       })
     });
   }

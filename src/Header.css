@@ -9,3 +9,7 @@
     background-color: rgb(227, 229, 233);
     color: #000000;
   }
+
+  header {
+    width: 100%;
+  }
