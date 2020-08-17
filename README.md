@@ -14,8 +14,9 @@ Developement is ongoing!
 Planned features include:
 * ~~A better decklist table, with interactive and sortable columns.~~
 * Making the decklist table more visually appealing (column/row outlines?)
-* A list of cards on click for each bar and subar in each chart.
+* ~~Show card previews on hover in decklist.~~
+* ~~A list of cards on click for each bar and subar in each chart.~~
 * Speed improvements, with a cleanup of the way the Analyzer puts information in the format that charts need.
 * ~~Card images when hovering a card name in the decklist table.~~
-* Even more statistics!
+* ~~Even more statistics!~~
 
