@@ -50,19 +50,12 @@ export default class ColorTooltip extends React.Component {
                 let thisRow = []
                 for (let j = 0; j < numberOfColumns; j++) {
                     if (lastPivot + j < cardList.length) {
-                        thisRow.push(<td>&nbsp;&nbsp;{cardList[lastPivot + j]}</td>)
+                        thisRow.push(<td>&nbsp;{cardList[lastPivot + j]}</td>)
                     }
                 }
                 lastPivot += numberOfColumns;
                 tableRows.push(<tr>{thisRow}</tr>)
             }
-
-            // for (let i = 0; i < cardList.length - 1; i+= 2) {
-            //     tableRows.push(<tr><td>{cardList[i]}</td><td>{cardList[i + 1]}</td></tr>)
-            // }
-            // if (cardList.length % 2 !== 0) {
-            //     tableRows.push(<tr><td>{cardList[cardList.length - 1]}</td><td/></tr>)
-            // }
 
             return <table>{tableRows}</table>
         } else {
