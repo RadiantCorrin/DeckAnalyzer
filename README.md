@@ -19,4 +19,4 @@ Planned features include:
 * Speed improvements, with a cleanup of the way the Analyzer puts information in the format that charts need.
 * ~~Card images when hovering a card name in the decklist table.~~
 * ~~Even more statistics!~~
-
+* New welcome page.
