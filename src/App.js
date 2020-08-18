@@ -47,34 +47,43 @@ export default class App extends React.Component {
     this.barClick = this.typeBarClick.bind(this)
 
     this.colorMap = { Colorless: "#8e8e93", White: "#ffcc00", Blue: "#5ac8fa", Black: "#242526", Red: "#ff3b30", Green: "#4cd964", }
+
+    this.minGraphWidth = '200px'
+    this.minGraphHeight = '325px'
   }
 
   render() {
     return (
       // style={{ height: '100vh', width: "100vw" }}
       <div style={{ height: '100%', width: '100%', position: 'relative', zIndex: 0, pointerEvents: 'none' }}>
-        {/* The header for the website when nothing is loaded */}
-        {!this.state.loaded && <Header mode="Welcome" />}
+        {/* The header for the website when nothing is loaded
+        {!this.state.loaded && <Header mode="Welcome" style={{ pointerEvents: 'auto' }} />}
 
         {/* The welcome page of the analyzer. */}
-        {!this.state.loaded &&
-          <Container style={{pointerEvents: 'auto'}} fluid>
+        {/* {!this.state.loaded &&
+          <Container style={{ pointerEvents: 'auto', height: '66%', width: '90%' }} fluid>
             <Card>
               <CardBody>
-                <p>
-                  Just put the URL to your deck below, and the Analyzer will display information about it.
+                <p style={{ fontSize: '1.35em' }}>
+                  Welcome to the Deck Analyzer!
                 </p>
-                <p>
-                  Currently, the Analyzer has only been tested with Commander decks. If your deck is not a Commander deck, the Analyzer may not work as intended!
-                </p>
+                <hr></hr>
+                <div>
+                  To start, put the URL to your deck below, and the Analyzer will display information about it.
+                </div>
                 <p>
                   You can use this link as an example, if you want: <a href="https://archidekt.com/decks/468872">https://archidekt.com/decks/468872</a>
+                </p>
+
+                <p style={{ color: 'grey' }}>
+                  (Currently, the Analyzer has only been tested with Commander decks. If your deck is not a Commander deck, the Analyzer may not work as intended!)
                 </p>
 
                 <Form onSubmit={this.handleKeyPress}>
                   <FormGroup>
                     <Label for="deckURL">Deck URL</Label>
                     <Input
+
                       type="url"
                       name="url" id="inputURL"
                       placeholder="Archidekt URL goes here"
@@ -83,11 +92,7 @@ export default class App extends React.Component {
                   </FormGroup>
                 </Form>
 
-                <p>
-                  WARNING: The free proxy this website uses to solve a CORS issue has been a little unstable recently. If the analyzer is hanging after you press load, try refreshing or waiting a minute. The proxy will be fixed quickly.
-                </p>
-
-                {!this.state.loadingDeck && <Button onClick={this.loadDeck}>Load</Button>}
+                {!this.state.loadingDeck && <Button style={{ width: "100%" }} onClick={this.loadDeck}>Load</Button>}
 
                 {this.state.loadError &&
                   <Card>
@@ -101,17 +106,92 @@ export default class App extends React.Component {
                   </div>}
               </CardBody>
             </Card>
-          </Container>}
+          </Container>} */}
+
+        {!this.state.loaded &&
+          <div className='welcomeContainer' style={{ fontSize: '1.1rem'}}>
+            <div className='welcomeHeader'>
+              <Header mode="Welcome" style={{ pointerEvents: 'auto' }} />
+            </div>
+
+            <div className='welcome' >
+              <p style={{ fontSize: '2rem' }}>
+                Welcome to the Deck Analyzer!
+              <hr></hr>
+              </p>
+              <p >The Deck Analyzer is a tool that helps you when you're deckbuilding Magic: The Gathering decks.</p>
+              <p>To assist you, it can do things like:</p>
+
+            </div>
+
+            <div className='paddingLeft'/>
+
+            <div className='paddingRight'/>
+
+            <div className='example1'>
+              {/* <img src='https://cdn.pixabay.com/photo/2017/05/14/03/45/gui-2311261_960_720.png' alt='' style={{ height: '200px', width: '200px'}}></img> */}
+              <p>Show you charts about the cards in your deck, based on things like type and mana cost.</p>
+            </div>
+
+            <div className='example2'>
+              <p>Display stats about your deck, like mana cost median and mode.</p>
+            </div>
+
+            <div className='example3'>
+              <p>Show you your deck with prices from popular outlets, and let you sort through it by name or set or price.</p>
+            </div>
+
+            <div className='launch'>
+
+              <div>
+                To start, put the URL to your deck below, and the Analyzer will display information about it.
+                </div>
+              <p>
+                You can use this link as an example, if you want: <a href="https://archidekt.com/decks/468872">https://archidekt.com/decks/468872</a>
+              </p>
+
+              <p style={{ color: 'grey' }}>
+                (Currently, the Analyzer has only been tested with Commander decks. If your deck is not a Commander deck, the Analyzer may not work as intended!)
+                </p>
+
+              <Form onSubmit={this.handleKeyPress}>
+                <FormGroup>
+                  <Label for="deckURL">Deck URL</Label>
+                  <Input
+
+                    type="url"
+                    name="url" id="inputURL"
+                    placeholder="Archidekt URL goes here"
+                    onChange={e => this.setState({ deckURL: e.target.value })}>
+                  </Input>
+                </FormGroup>
+              </Form>
+
+              {!this.state.loadingDeck && <Button style={{ width: "100%" }} onClick={this.loadDeck}>Load</Button>}
+
+              {this.state.loadError &&
+                <Card>
+                  <CardHeader color="text-warning">Error loading decklist!</CardHeader>
+                </Card>}
+
+              {this.state.loadingDeck &&
+                <div>
+                  <ProgressBar animated now={100} label={this.state.loadProgressStatus}>
+                  </ProgressBar>
+                </div>}
+            </div>
+          </div>
+        }
 
         {/* The information display for after the deck has been loaded / analyzed */}
         {this.state.loaded &&
-          <div className="customContainer" style={{ pointerEvents: 'none'}}>
+          <div className="customContainer" style={{ pointerEvents: 'none' }}>
             <div className="header">
               <Header mode="Loaded" deckName={this.state.deckName} deckURL={this.state.deckURL} />
             </div>
             <div className="sidebar" style={{ minWidth: "440px" }}>
               <Card style={{ height: '70%' }}>
-                <CardHeader style={{ paddingLeft: "11px" }}><b>Deck List</b></CardHeader>
+                <CardHeader style={{ paddingLeft: "11px" }}><b>Deck List</b> <i style={{ color: 'grey', fontSize: '14px' }}> (Click headers to sort by category, hover to see card) </i></CardHeader>
                 <div style={{ display: 'block', height: '100%', width: "100%", overflow: 'auto', border: "1px solid LightGray", }}>
                   <table style={{ height: "100%", width: "100%" }}>
                     <thead style={{ position: 'sticky', top: '0' }}>
@@ -131,42 +211,37 @@ export default class App extends React.Component {
               <Card style={{ height: "30%" }}>
                 <CardHeader style={{ paddingLeft: "11px" }}><b>Stats</b></CardHeader>
                 <CardBody style={{ paddingLeft: "11px", display: "block", overflow: "auto" }}>
-                  {/* <div>Total cost from TCGPlayer: <i style={{ color: 'green' }}>{"$" + this.state.TCGCost.toFixed(2)}</i></div>
-                  <div>Total cost from Card Kingdom: <i style={{ color: 'green' }}>{"$" + this.state.CKCost.toFixed(2)}</i></div>
-                  <div>Most expensive card from TCGPlayer: </div>
-                  <div><i style={{ color: 'green' }}>{this.state.TCGMax.name + " at $" + this.state.TCGMax.cost}</i></div>
-                  <div>Most expensive card from Card Kingdom:</div>
-                  <div><i style={{ color: 'green' }}>{this.state.CKMax.name + " at $" + this.state.CKMax.cost}</i></div> */}
+
                   <table>
                     <tr>
-                      <td style={{ textAlign: "right"}}>
-                        Total cost from TCGPlayer: 
+                      <td style={{ textAlign: "right" }}>
+                        Total cost from TCGPlayer:
                       </td>
-                      <td style={{textAlign: "left", color: "#5856d6"}}>
+                      <td style={{ textAlign: "left", color: "#5856d6" }}>
                         &nbsp;{"$" + this.state.TCGCost.toFixed(2)}
                       </td>
                     </tr>
                     <tr>
-                      <td style={{ textAlign: "right"}}>
-                      Most expensive from TCGPlayer:
+                      <td style={{ textAlign: "right" }}>
+                        Most expensive from TCGPlayer:
                       </td>
-                      <td style={{textAlign: "left", color: "#5856d6"}}>
+                      <td style={{ textAlign: "left", color: "#5856d6" }}>
                         &nbsp;{this.state.TCGMax.name + " ($" + this.state.TCGMax.cost.toFixed(2) + ")"}
                       </td>
                     </tr>
                     <tr>
-                      <td style={{ textAlign: "right"}}>
-                        Total cost from Card Kingdom: 
+                      <td style={{ textAlign: "right" }}>
+                        Total cost from Card Kingdom:
                       </td>
-                      <td style={{textAlign: "left", color: "#5856d6"}}>
+                      <td style={{ textAlign: "left", color: "#5856d6" }}>
                         &nbsp;{"$" + this.state.CKCost.toFixed(2)}
                       </td>
                     </tr>
                     <tr>
-                      <td style={{ textAlign: "right"}}>
-                      Most expensive from CK:
+                      <td style={{ textAlign: "right" }}>
+                        Most expensive from CK:
                       </td>
-                      <td style={{textAlign: "left", color: "#5856d6"}}>
+                      <td style={{ textAlign: "left", color: "#5856d6" }}>
                         &nbsp;{this.state.CKMax.name + " ($" + this.state.CKMax.cost.toFixed(2) + ")"}
                       </td>
                     </tr>
@@ -175,7 +250,7 @@ export default class App extends React.Component {
               </Card>
             </div>
             <div className="boxone">
-              <Card style={{ height: "100%", width: "100%" }}>
+              <Card style={{ height: "100%", width: "100%", minWidth: this.minGraphWidth, minHeight: this.minGraphHeight }}>
                 <CardHeader >
                   <b>CMC Breakdown</b>
                 </CardHeader>
@@ -223,7 +298,7 @@ export default class App extends React.Component {
               </Card>
             </div>
             <div className="boxtwo">
-              <Card style={{ height: "100%", width: "100%" }}>
+              <Card style={{ height: "100%", width: "100%", minWidth: this.minGraphWidth, minHeight: this.minGraphHeight }}>
                 <CardHeader>
                   <b>Type Distribution</b>
                 </CardHeader>
@@ -237,7 +312,7 @@ export default class App extends React.Component {
                       <YAxis>
                         <Label value='Number of Cards' angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }} />
                       </YAxis>
-                      <Tooltip content={<TypeTooltip showCardLists={this.state.typeShowCardLists} cardLists={this.state.typeCardLists}></TypeTooltip>}/>
+                      <Tooltip content={<TypeTooltip showCardLists={this.state.typeShowCardLists} cardLists={this.state.typeCardLists}></TypeTooltip>} />
                       <Bar dataKey="number" >
                         {this.state.typeData.map((entry, index) => (<Cell onClick={() => this.typeBarClick(entry.type)} key={`cell-${index}`} fill={this.state.typeColorMap[entry.type]} />))}
                       </Bar>
@@ -247,7 +322,7 @@ export default class App extends React.Component {
               </Card>
             </div>
             <div className="boxthree">
-              <Card style={{ height: "100%", width: "100%" }}>
+              <Card style={{ height: "100%", width: "100%", minWidth: this.minGraphWidth, minHeight: this.minGraphHeight }}>
                 <CardHeader>
                   <b>Color Breakdown</b>
                 </CardHeader>
@@ -259,7 +334,7 @@ export default class App extends React.Component {
                       <YAxis>
                         <Label value='Number of Cards by Color' angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }} />
                       </YAxis>
-                      <Tooltip content={<ColorTooltip showCardLists={this.state.colorShowCardLists} cardLists={this.state.colorCardLists}></ColorTooltip>}/>
+                      <Tooltip content={<ColorTooltip showCardLists={this.state.colorShowCardLists} cardLists={this.state.colorCardLists}></ColorTooltip>} />
                       <Bar dataKey="number">
                         {
                           (this.state.colorIncludeColorless) ?
@@ -282,8 +357,8 @@ export default class App extends React.Component {
               </Card>
 
             </div>
-            <div className="boxfour" style={{pointerEvents: 'none'}}>
-              <Card style={{ height: "100%", width: "100%", position: 'relative', zIndex: -1,  pointerEvents: 'auto'}}>
+            <div className="boxfour" style={{ pointerEvents: 'none' }}>
+              <Card style={{ height: "100%", width: "100%", position: 'relative', zIndex: -1, pointerEvents: 'auto', minWidth: this.minGraphWidth, minHeight: this.minGraphHeight }}>
                 <CardHeader>
                   <b>Number of Colored Pips</b>
                 </CardHeader>
@@ -310,11 +385,11 @@ export default class App extends React.Component {
                   </ResponsiveContainer>
                   <form style={{ height: "10%" }}>
                     <label>
-                      <input type="checkbox" style={{ position: 'relative', zIndex: '1000'}}onChange={this.pipsIncludeColorlessCheck} ></input>
+                      <input type="checkbox" style={{ position: 'relative', zIndex: '1000' }} onChange={this.pipsIncludeColorlessCheck} ></input>
                       {' '}Include {String.fromCharCode(9830)} Pips
                   </label>
                   </form>
-                  </CardBody>
+                </CardBody>
               </Card>
             </div>
           </div>
@@ -327,11 +402,11 @@ export default class App extends React.Component {
    * Toggles the card lists on the type bargraph tooltip
    */
   typeBarClick() {
-    this.setState({typeShowCardLists: !this.state.typeShowCardLists})
+    this.setState({ typeShowCardLists: !this.state.typeShowCardLists })
   }
 
   colorBarClick() {
-    this.setState({colorShowCardLists: !this.state.colorShowCardLists})
+    this.setState({ colorShowCardLists: !this.state.colorShowCardLists })
   }
 
   sortByName() {
@@ -639,7 +714,7 @@ export default class App extends React.Component {
           }
         }
 
-        
+
         // TODO: Needs support for colorless mana symbols
         // Parse the pip color symbols for this card and add them to the trackers
         for (let j = 0; j < tmp.manaCost.length; j++) {

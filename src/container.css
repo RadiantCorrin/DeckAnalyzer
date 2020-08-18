@@ -13,6 +13,79 @@
 
 }
 
+.welcomeContainer {
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr 2fr 1fr;
+  grid-auto-rows: 0.1fr 0.2fr 0.4fr 0.2fr 0.1fr;
+  grid-template-areas:
+    "welcomeHeader welcomeHeader welcomeHeader welcomeHeader welcomeHeader"
+    "p1 welcome welcome welcome p2"
+    "paddingLeft example1 example2 example3 paddingRight"
+    "p3 launch launch launch p4"
+    "welcomeFooter welcomeFooter welcomeFooter welcomeFooter welcomeFooter";
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  pointer-events: auto;
+}
+
+.paddingLeft {
+  grid-area: paddingLeft;
+}
+
+.paddingRight {
+  grid-area: paddingRight;
+}
+
+.welcomeHeader {
+  grid-area: welcomeHeader;
+}
+
+.welcome, .example1, .example2, .example3, .launch {
+  text-align: center;
+}
+
+.welcome {
+  grid-area: welcome;
+}
+
+.example1, .example2, .example3, .paddingLeft, .paddingRight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: whitesmoke;
+  background-color: #6c757d;
+}
+
+.example1, .example2, .example3 {
+  border-left: 1px solid lightgrey;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.example3 {
+  border-right: 1px solid lightgrey;
+}
+
+.example1 {
+  grid-area: example1;
+}
+
+.example2 {
+  grid-area: example2;
+}
+
+.example3 {
+  grid-area: example3;
+}
+
+.launch {
+  padding-top: 15px;
+  grid-area: launch;
+}
+
+
 .header, .sidebar, .boxone, .boxtwo, .boxthree {
   pointer-events: auto;
 }

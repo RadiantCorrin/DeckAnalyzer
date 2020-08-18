@@ -13,19 +13,20 @@ export default class Title extends React.Component {
         return (
             <div className="Header">
                 <header style={ (this.state.mode === "Welcome") ? { }: { height: '95%'} } >
-                    <h1 >Deck Analyzer</h1>
-                    <hr style={{width: "100%"}}></hr>
                     {
                         (this.state.mode === "Welcome") && 
-                        <div>
-                            <p className="lead">A simple analysis tool for Magic: The Gathering decklists hosted on <a href="https://archidekt.com/" target="_blank" rel='noopener noreferrer'>Archidekt</a></p>
-                        </div>
+                        <h1 >Deck Analyzer</h1>
                     }
                     {
-                        (this.state.mode === "Loaded") && 
+                        (this.state.mode === "Loaded") &&
+                        <div>
+                            <h1 >Deck Analyzer</h1>
+                        <hr style={{width: "100%"}}></hr>
                         <div>
                             <p className="lead">Now displaying <a href={this.state.deckURL} target="_blank" rel='noopener noreferrer'>{this.state.deckName}</a></p>
                         </div>
+                        </div>
+                        
                     }
                 </header>
             </div>
